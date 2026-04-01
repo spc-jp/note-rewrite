@@ -49,6 +49,33 @@
     const IconSmartphone = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>;
     const IconImage = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>;
 
+    // フワッと出て消える優しい通知（トースト）を表示する関数
+    const showToast = (message, isError = false) => {
+      const toast = document.createElement('div');
+      toast.className = `fixed bottom-6 right-6 px-6 py-4 rounded-xl shadow-2xl z-50 text-sm font-bold flex items-center gap-3 transition-all duration-500 transform translate-y-10 opacity-0 ${isError ? 'bg-red-600 text-white' : 'bg-gray-800 text-white border border-gray-700'}`;
+      
+      toast.innerHTML = isError 
+        ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${message}`
+        : `<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> ${message}`;
+
+      document.body.appendChild(toast);
+      
+      // ふんわりと表示させる
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-10', 'opacity-0');
+      });
+
+      // 3秒後にふんわりと消す
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0');
+        setTimeout(() => {
+          if (document.body.contains(toast)) {
+            document.body.removeChild(toast);
+          }
+        }, 500);
+      }, 3000);
+    };
+
     // クリップボードにコピーする共通関数
     const copyToClipboard = (text, message = 'コピーしました！') => {
       const textArea = document.createElement("textarea");
@@ -57,10 +84,10 @@
       textArea.select();
       try {
         document.execCommand('copy');
-        alert(message);
+        showToast(message);
       } catch (err) {
         console.error('コピーに失敗しました', err);
-        alert('コピーに失敗しました。手動でコピーしてください。');
+        showToast('コピーに失敗しました。お手数ですが手動でコピーをお願いいたします。', true);
       }
       document.body.removeChild(textArea);
     };
@@ -173,28 +200,39 @@
 
     // --- SNS誘導テンプレ ＆ Midjourneyプロンプト 共通コンポーネント ---
     function SnsAndImageTemplates({ articleTitle, articleUrl, mainContentText, mainContentLabel }) {
+      const [appName, setAppName] = useState('');
+      const [catchCopy, setCatchCopy] = useState('');
+
       const snsTemplates = [
         {
-          label: "パターン① 共感型（鉄板）",
-          text: `「正直これ知らないと損します…」\n\n私も以前は同じように悩んでいましたが、あることに気づいてから劇的に変わりました。\n\nその体験ストーリーと具体的な手順をnoteにまとめました👇\n\n${articleUrl}`
+          label: "パターン① 共感型（寄り添い）",
+          text: `「もっと早く知っていれば…」\n\n私も最初は難しくて戸惑っていましたが、あることに気づいてから景色が少し変わりました。\n\nその時の体験と、どなたでもできる小さなコツをnoteにまとめました👇\n\n${articleUrl}`
         },
         {
-          label: "パターン② ノウハウ切り出し",
-          text: `【${articleTitle}のコツ】\n\n大事なポイントを3つだけ無料で公開します！\n\n1. 〇〇を意識する\n2. 〇〇は使わない\n3. 〇〇の時間を決める\n\n「残りの具体的なステップ」はnoteにまとめました👇\n\n${articleUrl}`
+          label: "パターン② ノウハウ（お裾分け）",
+          text: `【${articleTitle}の小さなコツ】\n\n大切なポイントを3つだけ、ここでお裾分けしますね。\n\n1. 〇〇を意識してみる\n2. 〇〇は無理に使わない\n3. 〇〇の時間を大切にする\n\n「具体的な進め方」はnoteに優しくまとめました👇\n\n${articleUrl}`
         },
         {
-          label: "パターン③ 問いかけ型",
-          text: `突然ですが、これ、どっち選びますか？\n\nA：今のまま時間をかけ続ける\nB：〇〇を使って自動化する\n\nもし「B」を選んだ方は、ぜひこの記事を読んでみてください。\n\n答えと具体的な実践方法→noteへ誘導👇\n\n${articleUrl}`
+          label: "パターン③ 問いかけ型（穏やか）",
+          text: `ふと振り返ったとき、どちらを選びたいですか？\n\nA：これまで通り、時間をかけて頑張る\nB：〇〇を取り入れて、心にゆとりを持つ\n\nもし「B」に惹かれた方は、ぜひこの記事を覗いてみてください。\n\n具体的なヒントをnoteに書いています👇\n\n${articleUrl}`
         },
         {
-          label: "パターン④ ビフォーアフター",
-          text: `Before：毎日作業に追われて時間がない…\nAfter：作業時間が半分になり、成果もアップ！\n\n私が実際にやって効果があった「${articleTitle}」のコツ。\nやったこと全部まとめました👇\n\n${articleUrl}`
+          label: "パターン④ 変化（ビフォーアフター）",
+          text: `以前：毎日やることに追われて余裕がない…\n今：少しの工夫で、ホッと一息つける時間が増えました。\n\n私が実際に試してよかった「${articleTitle}」の工夫。\nどなたでも始められるように、noteへまとめました👇\n\n${articleUrl}`
         }
       ];
 
+      // 未入力の場合は元の記事タイトルをフォールバックとして使用
+      const displayAppName = appName.trim() !== '' ? appName : articleTitle;
+      
+      // キャッチコピーの有無でテキストの組み立てを変更
+      const typographyText = catchCopy.trim() !== '' 
+        ? `"${displayAppName}" and "${catchCopy}"` 
+        : `"${displayAppName}"`;
+
       // Midjourneyプロンプト（記事タイトルや内容からAIが最適な色と構成を考えた想定）
-      // noteの推奨見出し画像サイズ（1280×670）に合わせて --ar 1.91:1 を付与
-      const midjourneyPrompt = `A professional Japanese blog header image for an article about "${articleTitle}", dark navy blue gradient background (#1a2e5a to #2a4d9e), glowing abstract icons representing knowledge and productivity, subtle circuit board texture overlay, clean modern UI elements, bold white Japanese typography reading "${articleTitle}", gold accent highlights (#e8b830), soft blue glow effects, trustworthy and professional atmosphere, banner format, 8k resolution, highly detailed --ar 1.91:1 --v 6.0`;
+      // 入力された文字が typography reading の部分に反映される
+      const midjourneyPrompt = `A professional Japanese blog header image for an article about "${articleTitle}", dark navy blue gradient background (#1a2e5a to #2a4d9e), glowing abstract icons representing knowledge and productivity, subtle circuit board texture overlay, clean modern UI elements, bold white Japanese typography reading ${typographyText}, gold accent highlights (#e8b830), soft blue glow effects, trustworthy and professional atmosphere, banner format, 8k resolution, highly detailed --ar 1.91:1 --v 6.0`;
 
       // すべてコピーする処理
       const handleCopyAll = () => {
@@ -255,15 +293,40 @@
                 <IconImage className="w-6 h-6 text-pink-600" /> 
                 🎨 note見出し画像用 Midjourneyプロンプト
               </h4>
-              <p className="text-sm text-gray-500">記事の内容からAIが最適なカラーや世界観を推測し、リッチな見出し画像（1.91:1）を生成するための英語プロンプトです。</p>
+              <p className="text-sm text-gray-500">画像に入れたい文字（アプリ名やキャッチコピー）を入力すると、自動でプロンプトに反映されます。</p>
             </div>
             
+            {/* テキスト入力UI */}
+            <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm mb-4 flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wider">メインテキスト（タイトル・アプリ名）</label>
+                <input
+                  type="text"
+                  value={appName}
+                  onChange={(e) => setAppName(e.target.value)}
+                  placeholder={articleTitle}
+                  className="w-full p-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-shadow"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wider">サブテキスト（キャッチコピー）</label>
+                <input
+                  type="text"
+                  value={catchCopy}
+                  onChange={(e) => setCatchCopy(e.target.value)}
+                  placeholder="例：高度匿名化ツール（外部通信ゼロ・全ファイル対応）"
+                  className="w-full p-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-shadow"
+                />
+              </div>
+            </div>
+
+            {/* プロンプト表示部分 */}
             <div className="bg-gray-900 rounded-xl p-5 shadow-inner relative group">
               <button 
                 className="absolute top-4 right-4 text-gray-300 hover:text-white text-xs font-medium px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center gap-1 transition-colors"
                 onClick={() => copyToClipboard(midjourneyPrompt)}
               >
-                <IconCopy className="w-4 h-4" />コピー
+                <IconCopy className="w-4 h-4" />個別コピー
               </button>
               <p className="text-gray-300 text-sm font-mono leading-relaxed pr-20 break-all">
                 {midjourneyPrompt}
@@ -285,10 +348,10 @@
         setIsGenerating(true);
         setTimeout(() => {
           setResults([
-            `90日で売上が変わった！${article.title}の全貌`,
-            `【保存版】初心者でも絶対に失敗しないAI活用のステップ`,
-            `プロがこっそり教える、本当は教えたくない${article.title}`,
-            `なぜあなたのAI活用は上手くいかないのか？原因と対策`,
+            `【やさしい解説】${article.title}の基本と楽しみ方`,
+            `今日から少しずつ始める、${article.title}の第一歩`,
+            `私が見つけた、無理なく続けられる${article.title}のコツ`,
+            `もっと早く知りたかった！${article.title}のちょっとした工夫`,
           ]);
           setIsGenerating(false);
         }, 1500);
@@ -346,7 +409,7 @@
       const handleGenerate = () => {
         setIsGenerating(true);
         setTimeout(() => {
-          setResult(`## はじめに\n「AIが便利だと聞くけれど、具体的にどう仕事に使えばいいかわからない…」「ChatGPTを少し触ってみたけど、結局いつものやり方に戻ってしまった」\nそんなお悩みはありませんか？\n\n私も最初は同じように悩み、手探りで色々なAIツールを触る日々でした。しかし、AI活用の"あるコツ"に気づいてからは、毎日の単純作業にかかる時間が半分以下になり、本来やるべき仕事に集中できるようになりました。\n\n## この記事でわかること\n実は、AIを使いこなすために難しいITの知識は一切必要ありません。必要なのは、AIに対する「正しい指示の出し方（型）」を知ることだけです。\n\n### 読むメリット\n本記事では、私が実際の業務で試行錯誤して見つけた「明日からすぐに使える具体的なAI活用ステップ」を、初心者の方にもわかりやすく解説します。\n\nこの記事を最後まで読めば、あなたのAIに対する苦手意識がなくなり、明日から強力なアシスタントとして使いこなせるようになるはずです！\n\n---\n▼ 本編はこちらからお読みいただけます\n${article.url}`);
+          setResult(`## はじめに\n「AIが便利だと聞くけれど、難しそうでなかなか手が出せない…」\nそんな風に感じていらっしゃる方も多いのではないでしょうか？\n\n私も最初は同じように戸惑い、手探りで色々なものに触れる日々でした。しかし、AIと仲良くなるための"ほんの少しのコツ"に気づいてからは、難しいと思っていた作業がスッと楽になり、自分のための時間をゆったりと持てるようになりました。\n\n## この記事でお伝えしたいこと\n実は、AIを使いこなすために専門的な知識は必要ありません。大切なのは、AIへの「上手な話しかけ方（コツ）」を知ることだけなのです。\n\n### 読んでくださる方へ\n本記事では、私が日々の暮らしや活動の中で見つけた「今日からすぐに試せる、優しいAI活用のステップ」を、できるだけわかりやすく丁寧にご紹介します。\n\nこの記事を最後までお読みいただければ、AIへの苦手意識が和らぎ、明日から頼もしいパートナーとして楽しくお付き合いできるようになるはずです。\n\n---\n▼ 本編はこちらからゆっくりとお読みいただけます\n${article.url}`);
           setIsGenerating(false);
         }, 1500);
       };
@@ -405,9 +468,9 @@
         setIsGenerating(true);
         setTimeout(() => {
           setResults([
-            { day: '第1回', title: 'マインドセット編：AIを恐れない', desc: 'なぜ今AIを使うべきなのか、意識の変え方について。' },
-            { day: '第2回', title: 'ツール選定編：初心者に最適なAI', desc: 'ChatGPT、Claudeなどツールの選び方と初期設定。' },
-            { day: '第3回', title: '実践編：売上を上げるプロンプト術', desc: '実際に業務で使える具体的な指示文（プロンプト）の書き方。' },
+            { day: '第1回', title: 'まずはここから。心のハードルを下げてみましょう', desc: 'なぜ今これを取り入れると良いのか、ゆっくりと解説します。' },
+            { day: '第2回', title: '自分に合った道具選び。無理なく使えるものを見つける', desc: '難しく考えず、まずは簡単に触れられるツールの選び方。' },
+            { day: '第3回', title: '今日から試せる。日々の暮らしを少し豊かにする使い方', desc: '実際に試してみてよかった、具体的な活用方法のお裾分け。' },
           ]);
           setIsGenerating(false);
         }, 2000);
@@ -478,15 +541,15 @@
       const handleGenerate = () => {
         setIsGenerating(true);
         setTimeout(() => {
-          let draft = "## はじめに\n「これから情報発信を始めたいけれど、何から読めばいいかわからない」\nそんな方のために、過去の記事の中から特に重要なものを厳選してまとめました。\n\n## おすすめ記事まとめ\n\n";
+          let draft = "## はじめに\n「これから始めてみたいけれど、どこから読めばいいのかしら…」\nそんな風に迷われている方へ向けて、これまでの記事の中から、最初にお読みいただきたいものをいくつか選び、まとめてみました。\n\n## おすすめ記事まとめ\n\n";
           
           urls.forEach((u, i) => {
             draft += `### ${i + 1}. ${u.title}\n`;
-            draft += `この記事では、具体的なノウハウや考え方について詳しく解説しています。まずはここから読むのがおすすめです。\n`;
+            draft += `この記事では、私なりの工夫や考え方を丁寧にご紹介しています。お時間のある時に、ぜひここから読んでみてくださいね。\n`;
             draft += `${u.url}\n\n`;
           });
           
-          draft += "## おわりに\nいかがでしたか？これらの記事を読んで、ぜひ実践してみてください！";
+          draft += "## おわりに\nいかがでしたか？これらの記事が、少しでも皆様の参考になれば嬉しいです。ぜひ、ご自身のペースで実践してみてくださいね！";
           setResult(draft);
           setIsGenerating(false);
         }, 1500);
