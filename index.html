@@ -34,7 +34,7 @@
   <script type="text/babel">
     const { useState } = React;
 
-    // --- アイコンパーツ (エラーを防ぐため外部に依存せずすべて直接描画) ---
+    // --- アイコンパーツ ---
     const IconPen = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>;
     const IconFileText = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>;
     const IconScissors = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>;
@@ -46,16 +46,18 @@
     const IconPlus = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
     const IconTrash = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
     const IconArrowRight = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>;
+    const IconSmartphone = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>;
+    const IconImage = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>;
 
     // クリップボードにコピーする共通関数
-    const copyToClipboard = (text) => {
+    const copyToClipboard = (text, message = 'コピーしました！') => {
       const textArea = document.createElement("textarea");
       textArea.value = text;
       document.body.appendChild(textArea);
       textArea.select();
       try {
         document.execCommand('copy');
-        alert('コピーしました！\nnoteの投稿画面に貼り付けてください。');
+        alert(message);
       } catch (err) {
         console.error('コピーに失敗しました', err);
         alert('コピーに失敗しました。手動でコピーしてください。');
@@ -69,7 +71,6 @@
       const [articleData, setArticleData] = useState(null);
       const [activeTab, setActiveTab] = useState('title');
 
-      // URLを読み込むモック機能
       const handleFetchArticle = () => {
         if (!mainUrl.includes('note.com')) {
           alert('noteのURLを入力してください。（※プロトタイプのためダミーデータを読み込みます）');
@@ -77,7 +78,6 @@
         }
         setIsFetching(true);
         setTimeout(() => {
-          // URLから取得した想定のダミーデータ
           setArticleData({
             url: mainUrl,
             title: 'AI活用のコツと明日から使えるプロンプト術',
@@ -89,7 +89,7 @@
 
       return (
         <div className="min-h-screen bg-gray-50 font-sans text-gray-800 p-6">
-          <div className="max-w-4xl mx-auto space-y-8">
+          <div className="max-w-5xl mx-auto space-y-8">
             
             {/* ヘッダー＆メインURL入力部 */}
             <div className="text-center space-y-4">
@@ -171,6 +171,110 @@
       </button>
     );
 
+    // --- SNS誘導テンプレ ＆ Midjourneyプロンプト 共通コンポーネント ---
+    function SnsAndImageTemplates({ articleTitle, articleUrl, mainContentText, mainContentLabel }) {
+      const snsTemplates = [
+        {
+          label: "パターン① 共感型（鉄板）",
+          text: `「正直これ知らないと損します…」\n\n私も以前は同じように悩んでいましたが、あることに気づいてから劇的に変わりました。\n\nその体験ストーリーと具体的な手順をnoteにまとめました👇\n\n${articleUrl}`
+        },
+        {
+          label: "パターン② ノウハウ切り出し",
+          text: `【${articleTitle}のコツ】\n\n大事なポイントを3つだけ無料で公開します！\n\n1. 〇〇を意識する\n2. 〇〇は使わない\n3. 〇〇の時間を決める\n\n「残りの具体的なステップ」はnoteにまとめました👇\n\n${articleUrl}`
+        },
+        {
+          label: "パターン③ 問いかけ型",
+          text: `突然ですが、これ、どっち選びますか？\n\nA：今のまま時間をかけ続ける\nB：〇〇を使って自動化する\n\nもし「B」を選んだ方は、ぜひこの記事を読んでみてください。\n\n答えと具体的な実践方法→noteへ誘導👇\n\n${articleUrl}`
+        },
+        {
+          label: "パターン④ ビフォーアフター",
+          text: `Before：毎日作業に追われて時間がない…\nAfter：作業時間が半分になり、成果もアップ！\n\n私が実際にやって効果があった「${articleTitle}」のコツ。\nやったこと全部まとめました👇\n\n${articleUrl}`
+        }
+      ];
+
+      // Midjourneyプロンプト（記事タイトルや内容からAIが最適な色と構成を考えた想定）
+      // noteの推奨見出し画像サイズ（1280×670）に合わせて --ar 1.91:1 を付与
+      const midjourneyPrompt = `A professional Japanese blog header image for an article about "${articleTitle}", dark navy blue gradient background (#1a2e5a to #2a4d9e), glowing abstract icons representing knowledge and productivity, subtle circuit board texture overlay, clean modern UI elements, bold white Japanese typography reading "${articleTitle}", gold accent highlights (#e8b830), soft blue glow effects, trustworthy and professional atmosphere, banner format, 8k resolution, highly detailed --ar 1.91:1 --v 6.0`;
+
+      // すべてコピーする処理
+      const handleCopyAll = () => {
+        const snsText = snsTemplates.map(t => `【${t.label}】\n${t.text}`).join('\n\n------------------------\n\n');
+        
+        const fullText = `■ ${mainContentLabel}\n\n${mainContentText}\n\n━━━━━━━━━━━━━━━━━━━━\n\n■ SNS誘導テンプレ\n\n${snsText}\n\n━━━━━━━━━━━━━━━━━━━━\n\n■ 見出し画像用 Midjourneyプロンプト (V8想定)\n\n${midjourneyPrompt}`;
+        
+        copyToClipboard(fullText, '生成文、SNSテンプレ、MJプロンプトをすべてコピーしました！');
+      };
+
+      return (
+        <div className="mt-10 pt-8 border-t border-gray-200 animate-in space-y-10">
+          
+          {/* SNSテンプレセクション */}
+          <div>
+            <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-6">
+              <div>
+                <h4 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-1">
+                  <IconSmartphone className="w-6 h-6 text-indigo-600" /> 
+                  SNSでnoteへ誘導する文面テンプレ
+                </h4>
+                <p className="text-sm text-gray-500">作成した記事をSNS（X/Twitter等）で告知し、noteへのアクセスを増やすためのテンプレートです。</p>
+              </div>
+              
+              {/* すべてコピーボタン（最も目立つように配置） */}
+              <button 
+                onClick={handleCopyAll}
+                className="bg-gray-800 text-white px-5 py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-bold hover:bg-gray-900 transition-colors shadow-md whitespace-nowrap flex-shrink-0 border-b-4 border-gray-900 active:border-b-0 active:translate-y-1"
+              >
+                <IconCopy className="w-5 h-5" /> 全て一括でコピーする（生成文・SNS・画像P）
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {snsTemplates.map((t, i) => (
+                <div key={i} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm group hover:border-indigo-300 transition-colors flex flex-col">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded">{t.label}</span>
+                    <button 
+                      className="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-medium px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 rounded-lg flex items-center gap-1"
+                      onClick={() => copyToClipboard(t.text)}
+                    >
+                      <IconCopy className="w-3 h-3" />個別コピー
+                    </button>
+                  </div>
+                  <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed flex-1 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    {t.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Midjourneyプロンプトセクション */}
+          <div>
+            <div className="mb-4">
+              <h4 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-1">
+                <IconImage className="w-6 h-6 text-pink-600" /> 
+                🎨 note見出し画像用 Midjourneyプロンプト
+              </h4>
+              <p className="text-sm text-gray-500">記事の内容からAIが最適なカラーや世界観を推測し、リッチな見出し画像（1.91:1）を生成するための英語プロンプトです。</p>
+            </div>
+            
+            <div className="bg-gray-900 rounded-xl p-5 shadow-inner relative group">
+              <button 
+                className="absolute top-4 right-4 text-gray-300 hover:text-white text-xs font-medium px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center gap-1 transition-colors"
+                onClick={() => copyToClipboard(midjourneyPrompt)}
+              >
+                <IconCopy className="w-4 h-4" />コピー
+              </button>
+              <p className="text-gray-300 text-sm font-mono leading-relaxed pr-20 break-all">
+                {midjourneyPrompt}
+              </p>
+            </div>
+          </div>
+
+        </div>
+      );
+    }
+
     // --- 各機能コンポーネント ---
 
     function TitleFeature({ article }) {
@@ -191,8 +295,8 @@
       };
 
       return (
-        <div className="space-y-6 max-w-2xl mx-auto animate-in">
-          <div className="text-center">
+        <div className="space-y-6 max-w-4xl mx-auto animate-in">
+          <div className="max-w-2xl mx-auto text-center mb-6">
             <h3 className="text-xl font-bold text-gray-800 mb-2">クリック率を高めるタイトル生成</h3>
             <p className="text-gray-500 text-sm">元のタイトルや内容を分析し、より魅力的なタイトル案を複数提案します。</p>
           </div>
@@ -200,26 +304,36 @@
           <button
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
+            className="w-full max-w-2xl mx-auto bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
           >
             {isGenerating ? <IconLoader className="w-5 h-5 animate-spin" /> : <IconPen className="w-5 h-5" />}
             タイトル案を生成する
           </button>
 
           {results.length > 0 && (
-            <div className="space-y-3 pt-4 animate-in">
-              {results.map((title, i) => (
-                <div key={i} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex justify-between items-center group hover:border-indigo-300 transition-colors">
-                  <span className="text-gray-800 font-medium">{title}</span>
-                  <button 
-                    className="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-medium px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 rounded-lg flex items-center gap-1"
-                    onClick={() => copyToClipboard(title)}
-                  >
-                    <IconCopy className="w-4 h-4" />コピー
-                  </button>
-                </div>
-              ))}
-            </div>
+            <>
+              <div className="space-y-3 pt-4 animate-in max-w-2xl mx-auto">
+                {results.map((title, i) => (
+                  <div key={i} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex justify-between items-center group hover:border-indigo-300 transition-colors">
+                    <span className="text-gray-800 font-medium">{title}</span>
+                    <button 
+                      className="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-medium px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 rounded-lg flex items-center gap-1"
+                      onClick={() => copyToClipboard(title)}
+                    >
+                      <IconCopy className="w-4 h-4" />個別コピー
+                    </button>
+                  </div>
+                ))}
+              </div>
+              
+              {/* SNS告知文面＆画像P 提案（一括コピー情報渡し） */}
+              <SnsAndImageTemplates 
+                articleTitle={results[0]} 
+                articleUrl={article.url}
+                mainContentLabel="生成されたタイトル案"
+                mainContentText={results.join('\n')}
+              />
+            </>
           )}
         </div>
       );
@@ -238,8 +352,8 @@
       };
 
       return (
-        <div className="space-y-6 max-w-3xl mx-auto animate-in">
-          <div className="text-center">
+        <div className="space-y-6 max-w-4xl mx-auto animate-in">
+          <div className="max-w-2xl mx-auto text-center mb-6">
             <h3 className="text-xl font-bold text-gray-800 mb-2">導入文リライト（別記事化）</h3>
             <p className="text-gray-500 text-sm">導入文を変えるだけで「新しい記事」として再投稿できます。noteの目次用に「##」を付けて出力します。</p>
           </div>
@@ -247,27 +361,37 @@
           <button
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
+            className="w-full max-w-2xl mx-auto bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
           >
             {isGenerating ? <IconLoader className="w-5 h-5 animate-spin" /> : <IconFileText className="w-5 h-5" />}
             新しい導入文を生成する
           </button>
 
           {result && (
-            <div className="bg-white rounded-xl shadow-sm border border-indigo-200 overflow-hidden animate-in">
-              <div className="bg-indigo-50/50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
-                <span className="font-medium text-indigo-900 flex items-center gap-1"><IconCheckCircle className="w-4 h-4 text-green-600"/>生成完了</span>
-                <button 
-                  onClick={() => copyToClipboard(result)}
-                  className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-3 py-1.5 bg-white border border-indigo-200 rounded-lg shadow-sm transition-colors"
-                >
-                  <IconCopy className="w-4 h-4" />コピーしてnoteに貼る
-                </button>
+            <>
+              <div className="bg-white max-w-2xl mx-auto rounded-xl shadow-sm border border-indigo-200 overflow-hidden animate-in">
+                <div className="bg-indigo-50/50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
+                  <span className="font-medium text-indigo-900 flex items-center gap-1"><IconCheckCircle className="w-4 h-4 text-green-600"/>生成完了</span>
+                  <button 
+                    onClick={() => copyToClipboard(result)}
+                    className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-3 py-1.5 bg-white border border-indigo-200 rounded-lg shadow-sm transition-colors"
+                  >
+                    <IconCopy className="w-4 h-4" />個別コピー
+                  </button>
+                </div>
+                <div className="p-6 whitespace-pre-wrap text-gray-700 font-medium leading-relaxed max-h-[400px] overflow-y-auto">
+                  {result}
+                </div>
               </div>
-              <div className="p-6 whitespace-pre-wrap text-gray-700 font-medium leading-relaxed max-h-[400px] overflow-y-auto">
-                {result}
-              </div>
-            </div>
+
+              {/* SNS告知文面＆画像P 提案（一括コピー情報渡し） */}
+              <SnsAndImageTemplates 
+                articleTitle={article.title} 
+                articleUrl={article.url}
+                mainContentLabel="生成された導入文"
+                mainContentText={result}
+              />
+            </>
           )}
         </div>
       );
@@ -290,8 +414,8 @@
       };
 
       return (
-        <div className="space-y-6 max-w-3xl mx-auto animate-in">
-          <div className="text-center">
+        <div className="space-y-6 max-w-4xl mx-auto animate-in">
+          <div className="max-w-2xl mx-auto text-center mb-6">
             <h3 className="text-xl font-bold text-gray-800 mb-2">長文記事のシリーズ化（分割）</h3>
             <p className="text-gray-500 text-sm">長すぎる記事をAIが意味の区切りで分割し、数日間の「連載企画」として再構成します。</p>
           </div>
@@ -299,36 +423,35 @@
           <button
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
+            className="w-full max-w-2xl mx-auto bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
           >
             {isGenerating ? <IconLoader className="w-5 h-5 animate-spin" /> : <IconScissors className="w-5 h-5" />}
             記事を3分割して連載にする
           </button>
 
           {results.length > 0 && (
-            <div className="space-y-4 animate-in">
-              <div className="flex justify-end">
-                <button 
-                  onClick={() => {
-                    const text = results.map(r => `【${r.day}】${r.title}\n${r.desc}`).join('\n\n');
-                    copyToClipboard(text);
-                  }}
-                  className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-4 py-2 bg-indigo-50 rounded-lg transition-colors border border-indigo-100"
-                >
-                  <IconCopy className="w-4 h-4" />一括コピー
-                </button>
+            <>
+              <div className="space-y-4 animate-in">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {results.map((item, i) => (
+                    <div key={i} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden group hover:border-indigo-300 transition-all">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+                      <span className="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded mb-3">{item.day}</span>
+                      <h4 className="font-bold text-gray-800 mb-2 leading-tight">{item.title}</h4>
+                      <p className="text-sm text-gray-600">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {results.map((item, i) => (
-                  <div key={i} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden group hover:border-indigo-300 transition-all">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
-                    <span className="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded mb-3">{item.day}</span>
-                    <h4 className="font-bold text-gray-800 mb-2 leading-tight">{item.title}</h4>
-                    <p className="text-sm text-gray-600">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+
+              {/* SNS告知文面＆画像P 提案（一括コピー情報渡し） */}
+              <SnsAndImageTemplates 
+                articleTitle={`連載：${results[0].title}`} 
+                articleUrl={article.url}
+                mainContentLabel="生成されたシリーズ構成案"
+                mainContentText={results.map(r => `【${r.day}】${r.title}\n${r.desc}`).join('\n\n')}
+              />
+            </>
           )}
         </div>
       );
@@ -370,13 +493,13 @@
       };
 
       return (
-        <div className="space-y-6 max-w-3xl mx-auto animate-in">
-          <div className="text-center">
+        <div className="space-y-6 max-w-4xl mx-auto animate-in">
+          <div className="max-w-2xl mx-auto text-center mb-6">
             <h3 className="text-xl font-bold text-gray-800 mb-2">回遊率を上げる「まとめ記事」作成</h3>
             <p className="text-gray-500 text-sm">まとめたい記事のURLを追加していくだけで、内部リンク付きのまとめ記事を自動生成します。</p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+          <div className="bg-white max-w-2xl mx-auto p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
             <h4 className="font-medium text-gray-700">まとめる記事リスト ({urls.length}件)</h4>
             
             <div className="space-y-2">
@@ -418,27 +541,37 @@
           <button
             onClick={handleGenerate}
             disabled={isGenerating || urls.length === 0}
-            className="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
+            className="w-full max-w-2xl mx-auto bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
           >
             {isGenerating ? <IconLoader className="w-5 h-5 animate-spin" /> : <IconListPlus className="w-5 h-5" />}
             このリストでまとめ記事の下書きを生成
           </button>
 
           {result && (
-            <div className="bg-white rounded-xl shadow-sm border border-indigo-200 overflow-hidden animate-in">
-              <div className="bg-indigo-50/50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
-                <span className="font-medium text-indigo-900 flex items-center gap-1"><IconCheckCircle className="w-4 h-4 text-green-600"/>生成完了</span>
-                <button 
-                  onClick={() => copyToClipboard(result)}
-                  className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-3 py-1.5 bg-white border border-indigo-200 rounded-lg shadow-sm transition-colors"
-                >
-                  <IconCopy className="w-4 h-4" />コピーしてnoteに貼る
-                </button>
+            <>
+              <div className="bg-white max-w-2xl mx-auto rounded-xl shadow-sm border border-indigo-200 overflow-hidden animate-in">
+                <div className="bg-indigo-50/50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
+                  <span className="font-medium text-indigo-900 flex items-center gap-1"><IconCheckCircle className="w-4 h-4 text-green-600"/>生成完了</span>
+                  <button 
+                    onClick={() => copyToClipboard(result)}
+                    className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-3 py-1.5 bg-white border border-indigo-200 rounded-lg shadow-sm transition-colors"
+                  >
+                    <IconCopy className="w-4 h-4" />個別コピー
+                  </button>
+                </div>
+                <div className="p-6 whitespace-pre-wrap text-gray-700 font-medium leading-relaxed">
+                  {result}
+                </div>
               </div>
-              <div className="p-6 whitespace-pre-wrap text-gray-700 font-medium leading-relaxed">
-                {result}
-              </div>
-            </div>
+
+              {/* SNS告知文面＆画像P 提案（一括コピー情報渡し） */}
+              <SnsAndImageTemplates 
+                articleTitle="おすすめ記事まとめ" 
+                articleUrl={urls[0].url}
+                mainContentLabel="生成されたまとめ記事"
+                mainContentText={result}
+              />
+            </>
           )}
         </div>
       );
