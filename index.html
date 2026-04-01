@@ -1,0 +1,403 @@
+import React, { useState } from 'react';
+import { PenTool, FileText, Scissors, ListPlus, Link as LinkIcon, Loader2, Copy, CheckCircle2, Plus, Trash2, ArrowRight } from 'lucide-react';
+
+// クリップボードにコピーする共通関数
+const copyToClipboard = (text) => {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    alert('コピーしました！\nnoteの投稿画面に貼り付けてください。');
+  } catch (err) {
+    console.error('コピーに失敗しました', err);
+    alert('コピーに失敗しました。手動でコピーしてください。');
+  }
+  document.body.removeChild(textArea);
+};
+
+export default function App() {
+  const [mainUrl, setMainUrl] = useState('');
+  const [isFetching, setIsFetching] = useState(false);
+  const [articleData, setArticleData] = useState(null);
+  const [activeTab, setActiveTab] = useState('title');
+
+  // URLを読み込むモック機能
+  const handleFetchArticle = () => {
+    if (!mainUrl.includes('note.com')) {
+      alert('noteのURLを入力してください。（※プロトタイプのためダミーデータを読み込みます）');
+      return;
+    }
+    setIsFetching(true);
+    setTimeout(() => {
+      // URLから取得した想定のダミーデータ
+      setArticleData({
+        url: mainUrl,
+        title: 'AI活用のコツと明日から使えるプロンプト術',
+        content: '今回はAIの活用方法について解説します。AIを使うと業務がとても効率化されます。ぜひ読んでみてください。\n\n第1章：AIに対するマインドセット...\n第2章：最適なツールの選び方...\n第3章：実践的なプロンプトの書き方...',
+      });
+      setIsFetching(false);
+    }, 1200);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans text-gray-800 p-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        
+        {/* ヘッダー＆メインURL入力部 */}
+        <div className="text-center space-y-4">
+          <h1 className="text-3xl font-bold text-indigo-600 flex items-center justify-center gap-2">
+            <PenTool className="w-8 h-8" />
+            Note Rewrite Supporter
+          </h1>
+          <p className="text-gray-500">過去のnote記事URLを貼り付けて、新しいコンテンツに生まれ変わらせましょう。</p>
+          
+          <div className="max-w-2xl mx-auto bg-white p-2 rounded-full shadow-sm border border-gray-200 flex items-center mt-6">
+            <LinkIcon className="w-5 h-5 text-gray-400 ml-4 mr-2" />
+            <input
+              type="text"
+              value={mainUrl}
+              onChange={(e) => setMainUrl(e.target.value)}
+              placeholder="https://note.com/your_account/n/xxxxx"
+              className="flex-1 py-3 px-2 outline-none text-gray-700 bg-transparent"
+              onKeyDown={(e) => e.key === 'Enter' && handleFetchArticle()}
+            />
+            <button
+              onClick={handleFetchArticle}
+              disabled={isFetching || !mainUrl}
+              className="bg-indigo-600 text-white px-6 py-3 rounded-full font-medium hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex items-center gap-2"
+            >
+              {isFetching ? <Loader2 className="w-5 h-5 animate-spin" /> : '記事を読み込む'}
+            </button>
+          </div>
+        </div>
+
+        {/* 記事データが読み込まれたら表示されるアクションエリア */}
+        {articleData && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* 読み込んだ記事のプレビュー */}
+            <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-8 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-bold text-indigo-500 mb-1">現在選択中の記事</p>
+                <h2 className="text-lg font-bold text-gray-800">{articleData.title}</h2>
+              </div>
+              <a href={articleData.url} target="_blank" rel="noreferrer" className="text-sm text-indigo-600 hover:underline flex items-center gap-1">
+                元記事を確認 <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+
+            {/* アクションタブ */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="flex border-b border-gray-200 overflow-x-auto">
+                <TabButton icon={<PenTool />} label="タイトル生成" isActive={activeTab === 'title'} onClick={() => setActiveTab('title')} />
+                <TabButton icon={<FileText />} label="導入文リライト" isActive={activeTab === 'intro'} onClick={() => setActiveTab('intro')} />
+                <TabButton icon={<Scissors />} label="シリーズ化 (分割)" isActive={activeTab === 'split'} onClick={() => setActiveTab('split')} />
+                <TabButton icon={<ListPlus />} label="まとめ記事作成" isActive={activeTab === 'summary'} onClick={() => setActiveTab('summary')} />
+              </div>
+              
+              <div className="p-6 md:p-8 bg-gray-50/50">
+                {activeTab === 'title' && <TitleFeature article={articleData} />}
+                {activeTab === 'intro' && <IntroFeature article={articleData} />}
+                {activeTab === 'split' && <SplitFeature article={articleData} />}
+                {activeTab === 'summary' && <SummaryFeature mainArticle={articleData} />}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// タブボタンコンポーネント
+const TabButton = ({ icon, label, isActive, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 text-sm font-medium transition-colors whitespace-nowrap ${
+      isActive 
+        ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/30' 
+        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+    }`}
+  >
+    {React.cloneElement(icon, { className: 'w-4 h-4' })}
+    {label}
+  </button>
+);
+
+// --- 各機能コンポーネント ---
+
+function TitleFeature({ article }) {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [results, setResults] = useState([]);
+
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      setResults([
+        `90日で売上が変わった！${article.title}の全貌`,
+        `【保存版】初心者でも絶対に失敗しないAI活用のステップ`,
+        `プロがこっそり教える、本当は教えたくない${article.title}`,
+        `なぜあなたのAI活用は上手くいかないのか？原因と対策`,
+      ]);
+      setIsGenerating(false);
+    }, 1500);
+  };
+
+  return (
+    <div className="space-y-6 max-w-2xl mx-auto">
+      <div className="text-center">
+        <h3 className="text-xl font-bold text-gray-800 mb-2">クリック率を高めるタイトル生成</h3>
+        <p className="text-gray-500 text-sm">元のタイトルや内容を分析し、より魅力的なタイトル案を複数提案します。</p>
+      </div>
+
+      <button
+        onClick={handleGenerate}
+        disabled={isGenerating}
+        className="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
+      >
+        {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <PenTool className="w-5 h-5" />}
+        タイトル案を生成する
+      </button>
+
+      {results.length > 0 && (
+        <div className="space-y-3 pt-4 animate-in fade-in slide-in-from-bottom-4">
+          {results.map((title, i) => (
+            <div key={i} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex justify-between items-center group hover:border-indigo-300 transition-colors">
+              <span className="text-gray-800 font-medium">{title}</span>
+              <button 
+                className="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-medium px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 rounded-lg flex items-center gap-1"
+                onClick={() => copyToClipboard(title)}
+              >
+                <Copy className="w-4 h-4" />コピー
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function IntroFeature({ article }) {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [result, setResult] = useState('');
+
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      // 導入文の最後に元記事のURLを自動挿入するように変更
+      setResult(`## はじめに\n「AIが便利だと聞くけれど、具体的にどう仕事に使えばいいかわからない…」「ChatGPTを少し触ってみたけど、結局いつものやり方に戻ってしまった」\nそんなお悩みはありませんか？\n\n私も最初は同じように悩み、手探りで色々なAIツールを触る日々でした。しかし、AI活用の"あるコツ"に気づいてからは、毎日の単純作業にかかる時間が半分以下になり、本来やるべき仕事に集中できるようになりました。\n\n## この記事でわかること\n実は、AIを使いこなすために難しいITの知識は一切必要ありません。必要なのは、AIに対する「正しい指示の出し方（型）」を知ることだけです。\n\n### 読むメリット\n本記事では、私が実際の業務で試行錯誤して見つけた「明日からすぐに使える具体的なAI活用ステップ」を、初心者の方にもわかりやすく解説します。\n\nこの記事を最後まで読めば、あなたのAIに対する苦手意識がなくなり、明日から強力なアシスタントとして使いこなせるようになるはずです！\n\n---\n▼ 本編はこちらからお読みいただけます\n${article.url}`);
+      setIsGenerating(false);
+    }, 1500);
+  };
+
+  return (
+    <div className="space-y-6 max-w-3xl mx-auto">
+      <div className="text-center">
+        <h3 className="text-xl font-bold text-gray-800 mb-2">導入文リライト（別記事化）</h3>
+        <p className="text-gray-500 text-sm">導入文を変えるだけで「新しい記事」として再投稿できます。noteの目次用に「##」を付けて出力します。</p>
+      </div>
+
+      <button
+        onClick={handleGenerate}
+        disabled={isGenerating}
+        className="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
+      >
+        {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileText className="w-5 h-5" />}
+        新しい導入文を生成する
+      </button>
+
+      {result && (
+        <div className="bg-white rounded-xl shadow-sm border border-indigo-200 overflow-hidden animate-in fade-in slide-in-from-bottom-4">
+          <div className="bg-indigo-50/50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
+            <span className="font-medium text-indigo-900 flex items-center gap-1"><CheckCircle2 className="w-4 h-4 text-green-600"/>生成完了</span>
+            <button 
+              onClick={() => copyToClipboard(result)}
+              className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-3 py-1.5 bg-white border border-indigo-200 rounded-lg shadow-sm transition-colors"
+            >
+              <Copy className="w-4 h-4" />コピーしてnoteに貼る
+            </button>
+          </div>
+          {/* 高さが足りなくなるため、max-hを追加してスクロールできるように調整 */}
+          <div className="p-6 whitespace-pre-wrap text-gray-700 font-medium leading-relaxed max-h-[400px] overflow-y-auto">
+            {result}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SplitFeature({ article }) {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [results, setResults] = useState([]);
+
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      setResults([
+        { day: '第1回', title: 'マインドセット編：AIを恐れない', desc: 'なぜ今AIを使うべきなのか、意識の変え方について。' },
+        { day: '第2回', title: 'ツール選定編：初心者に最適なAI', desc: 'ChatGPT、Claudeなどツールの選び方と初期設定。' },
+        { day: '第3回', title: '実践編：売上を上げるプロンプト術', desc: '実際に業務で使える具体的な指示文（プロンプト）の書き方。' },
+      ]);
+      setIsGenerating(false);
+    }, 2000);
+  };
+
+  return (
+    <div className="space-y-6 max-w-3xl mx-auto">
+      <div className="text-center">
+        <h3 className="text-xl font-bold text-gray-800 mb-2">長文記事のシリーズ化（分割）</h3>
+        <p className="text-gray-500 text-sm">長すぎる記事をAIが意味の区切りで分割し、数日間の「連載企画」として再構成します。</p>
+      </div>
+
+      <button
+        onClick={handleGenerate}
+        disabled={isGenerating}
+        className="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
+      >
+        {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Scissors className="w-5 h-5" />}
+        記事を3分割して連載にする
+      </button>
+
+      {results.length > 0 && (
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
+          <div className="flex justify-end">
+            <button 
+              onClick={() => {
+                const text = results.map(r => `【${r.day}】${r.title}\n${r.desc}`).join('\n\n');
+                copyToClipboard(text);
+              }}
+              className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-4 py-2 bg-indigo-50 rounded-lg transition-colors border border-indigo-100"
+            >
+              <Copy className="w-4 h-4" />一括コピー
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {results.map((item, i) => (
+              <div key={i} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden group hover:border-indigo-300 transition-all">
+                <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+                <span className="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded mb-3">{item.day}</span>
+                <h4 className="font-bold text-gray-800 mb-2 leading-tight">{item.title}</h4>
+                <p className="text-sm text-gray-600">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SummaryFeature({ mainArticle }) {
+  // 最初の記事はすでに入っている状態にする
+  const [urls, setUrls] = useState([
+    { id: 1, url: mainArticle.url, title: mainArticle.title }
+  ]);
+  const [newUrl, setNewUrl] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [result, setResult] = useState('');
+
+  const handleAddUrl = () => {
+    if (!newUrl.includes('note.com')) return;
+    setUrls([...urls, { id: Date.now(), url: newUrl, title: '（URLから自動取得したタイトル）' }]);
+    setNewUrl('');
+  };
+
+  const handleRemoveUrl = (id) => {
+    setUrls(urls.filter(u => u.id !== id));
+  };
+
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      let draft = "## はじめに\n「これから情報発信を始めたいけれど、何から読めばいいかわからない」\nそんな方のために、過去の記事の中から特に重要なものを厳選してまとめました。\n\n## おすすめ記事まとめ\n\n";
+      
+      urls.forEach((u, i) => {
+        draft += `### ${i + 1}. ${u.title}\n`;
+        draft += `この記事では、具体的なノウハウや考え方について詳しく解説しています。まずはここから読むのがおすすめです。\n`;
+        draft += `${u.url}\n\n`;
+      });
+      
+      draft += "## おわりに\nいかがでしたか？これらの記事を読んで、ぜひ実践してみてください！";
+      setResult(draft);
+      setIsGenerating(false);
+    }, 1500);
+  };
+
+  return (
+    <div className="space-y-6 max-w-3xl mx-auto">
+      <div className="text-center">
+        <h3 className="text-xl font-bold text-gray-800 mb-2">回遊率を上げる「まとめ記事」作成</h3>
+        <p className="text-gray-500 text-sm">まとめたい記事のURLを追加していくだけで、内部リンク付きのまとめ記事を自動生成します。</p>
+      </div>
+
+      {/* URLリスト管理UI */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
+        <h4 className="font-medium text-gray-700">まとめる記事リスト ({urls.length}件)</h4>
+        
+        <div className="space-y-2">
+          {urls.map((u, i) => (
+            <div key={u.id} className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+              <span className="flex-shrink-0 w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-bold">{i + 1}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-800 truncate">{u.title}</p>
+                <p className="text-xs text-gray-400 truncate">{u.url}</p>
+              </div>
+              {i !== 0 && ( // メイン記事は消せないようにする
+                <button onClick={() => handleRemoveUrl(u.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="flex gap-2 pt-2">
+          <input
+            type="text"
+            value={newUrl}
+            onChange={(e) => setNewUrl(e.target.value)}
+            placeholder="追加するnoteのURLを貼り付け"
+            className="flex-1 p-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+            onKeyDown={(e) => e.key === 'Enter' && handleAddUrl()}
+          />
+          <button 
+            onClick={handleAddUrl}
+            disabled={!newUrl.includes('note.com')}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium whitespace-nowrap disabled:opacity-50 flex items-center gap-1"
+          >
+            <Plus className="w-4 h-4" />追加
+          </button>
+        </div>
+      </div>
+
+      <button
+        onClick={handleGenerate}
+        disabled={isGenerating || urls.length === 0}
+        className="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
+      >
+        {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <ListPlus className="w-5 h-5" />}
+        このリストでまとめ記事の下書きを生成
+      </button>
+
+      {result && (
+        <div className="bg-white rounded-xl shadow-sm border border-indigo-200 overflow-hidden animate-in fade-in slide-in-from-bottom-4">
+          <div className="bg-indigo-50/50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
+            <span className="font-medium text-indigo-900 flex items-center gap-1"><CheckCircle2 className="w-4 h-4 text-green-600"/>生成完了</span>
+            <button 
+              onClick={() => copyToClipboard(result)}
+              className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-3 py-1.5 bg-white border border-indigo-200 rounded-lg shadow-sm transition-colors"
+            >
+              <Copy className="w-4 h-4" />コピーしてnoteに貼る
+            </button>
+          </div>
+          <div className="p-6 whitespace-pre-wrap text-gray-700 font-medium leading-relaxed">
+            {result}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
