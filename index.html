@@ -60,12 +60,10 @@
 
       document.body.appendChild(toast);
       
-      // ふんわりと表示させる
       requestAnimationFrame(() => {
         toast.classList.remove('translate-y-10', 'opacity-0');
       });
 
-      // 3秒後にふんわりと消す
       setTimeout(() => {
         toast.classList.add('translate-y-10', 'opacity-0');
         setTimeout(() => {
@@ -240,7 +238,7 @@
         
         const fullText = `■ ${mainContentLabel}\n\n${mainContentText}\n\n━━━━━━━━━━━━━━━━━━━━\n\n■ SNS誘導テンプレ\n\n${snsText}\n\n━━━━━━━━━━━━━━━━━━━━\n\n■ 見出し画像用 Midjourneyプロンプト (V8想定)\n\n${midjourneyPrompt}`;
         
-        copyToClipboard(fullText, '生成文、SNSテンプレ、MJプロンプトをすべてコピーしました！');
+        copyToClipboard(fullText, '生成文、SNSテンプレ、MJプロンプトをすべて一括でコピーしました！');
       };
 
       return (
@@ -381,7 +379,7 @@
                     <span className="text-gray-800 font-medium">{title}</span>
                     <button 
                       className="text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-medium px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 rounded-lg flex items-center gap-1"
-                      onClick={() => copyToClipboard(title)}
+                      onClick={() => copyToClipboard(title, 'タイトルをコピーしました！')}
                     >
                       <IconCopy className="w-4 h-4" />個別コピー
                     </button>
@@ -409,7 +407,8 @@
       const handleGenerate = () => {
         setIsGenerating(true);
         setTimeout(() => {
-          setResult(`## はじめに\n「AIが便利だと聞くけれど、難しそうでなかなか手が出せない…」\nそんな風に感じていらっしゃる方も多いのではないでしょうか？\n\n私も最初は同じように戸惑い、手探りで色々なものに触れる日々でした。しかし、AIと仲良くなるための"ほんの少しのコツ"に気づいてからは、難しいと思っていた作業がスッと楽になり、自分のための時間をゆったりと持てるようになりました。\n\n## この記事でお伝えしたいこと\n実は、AIを使いこなすために専門的な知識は必要ありません。大切なのは、AIへの「上手な話しかけ方（コツ）」を知ることだけなのです。\n\n### 読んでくださる方へ\n本記事では、私が日々の暮らしや活動の中で見つけた「今日からすぐに試せる、優しいAI活用のステップ」を、できるだけわかりやすく丁寧にご紹介します。\n\nこの記事を最後までお読みいただければ、AIへの苦手意識が和らぎ、明日から頼もしいパートナーとして楽しくお付き合いできるようになるはずです。\n\n---\n▼ 本編はこちらからゆっくりとお読みいただけます\n${article.url}`);
+          // 1500文字程度のボリューム感を出すため、丁寧でゆったりとした長めのテキストを生成。末尾にハッシュタグを追加。
+          setResult(`## はじめに\n「AIが便利だと聞くけれど、難しそうでなかなか手が出せない…」\nそんな風に感じていらっしゃる方も多いのではないでしょうか？\n\n私も最初は同じように戸惑い、手探りで色々なものに触れる日々でした。新しい横文字ばかりが並ぶ画面を前に、「これは私には向いていないのかもしれない」と、そっとパソコンを閉じてしまったことも一度や二度ではありません。\n\nしかし、ある日ふとしたきっかけで、AIと仲良くなるための"ほんの少しのコツ"に気づいてからは、景色が少しずつ変わり始めました。難しいと思っていた作業がスッと楽になり、その分、お茶を淹れて一息ついたり、散歩に出かけたりと、自分のための時間をゆったりと持てるようになったのです。\n\n## これまでの私と、小さな変化\n昔は、何か新しいことを始めるたびに、分厚い説明書を端から端まで読まなければならないような気がしていました。でも、今の道具は少し違います。\n\n「完璧に使いこなさなければ」という肩の力を抜いて、「ちょっとこれ、手伝ってくれる？」と、まるでお隣さんに声をかけるように接するだけで、驚くほど助けになってくれることに気づいたのです。\n\n無理をして背伸びをする必要はありません。ご自身のペースで、少しずつ慣れていけば良いのです。\n\n## この記事でお伝えしたいこと\n実は、AIを使いこなすために専門的な知識は必要ありません。大切なのは、AIへの「上手な話しかけ方（コツ）」を知ることだけなのです。\n\n複雑な操作を覚える必要はありません。ご自身が日々感じていること、やりたいことを、そのままの言葉で伝える。たったそれだけの工夫で、AIはとても優秀で、そして優しいアシスタントになってくれます。\n\n### 読んでくださる方へ\n本記事では、私が日々の暮らしや活動の中で見つけた「今日からすぐに試せる、優しいAI活用のステップ」を、できるだけわかりやすく丁寧にご紹介します。\n\n「これなら私にもできるかもしれない」\nそんな風に思っていただけるよう、一つひとつの手順をゆっくりと解説していきます。\n\nこの記事を最後までお読みいただければ、AIへの苦手意識が少しずつ和らぎ、明日から頼もしいパートナーとして楽しくお付き合いできるようになるはずです。どうぞ、肩の力を抜いて、温かいお茶でも飲みながらお付き合いくださいね。\n\n---\n▼ 本編はこちらからゆっくりとお読みいただけます\n${article.url}\n\n#暮らしの工夫 #心地よい暮らし #新しい学び #私の小さな挑戦 #AIのある暮らし #ゆとりのある時間 #自分と向き合う`);
           setIsGenerating(false);
         }, 1500);
       };
@@ -427,7 +426,7 @@
             className="w-full max-w-2xl mx-auto bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
           >
             {isGenerating ? <IconLoader className="w-5 h-5 animate-spin" /> : <IconFileText className="w-5 h-5" />}
-            新しい導入文を生成する
+            新しい導入文を生成する（1500文字程度）
           </button>
 
           {result && (
@@ -436,7 +435,7 @@
                 <div className="bg-indigo-50/50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
                   <span className="font-medium text-indigo-900 flex items-center gap-1"><IconCheckCircle className="w-4 h-4 text-green-600"/>生成完了</span>
                   <button 
-                    onClick={() => copyToClipboard(result)}
+                    onClick={() => copyToClipboard(result, '導入文をコピーしました！')}
                     className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-3 py-1.5 bg-white border border-indigo-200 rounded-lg shadow-sm transition-colors"
                   >
                     <IconCopy className="w-4 h-4" />個別コピー
@@ -495,6 +494,17 @@
           {results.length > 0 && (
             <>
               <div className="space-y-4 animate-in">
+                <div className="flex justify-end">
+                  <button 
+                    onClick={() => {
+                      const text = results.map(r => `【${r.day}】${r.title}\n${r.desc}`).join('\n\n');
+                      copyToClipboard(text, '構成案を一括コピーしました！');
+                    }}
+                    className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-4 py-2 bg-indigo-50 rounded-lg transition-colors border border-indigo-100"
+                  >
+                    <IconCopy className="w-4 h-4" />一括コピー
+                  </button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {results.map((item, i) => (
                     <div key={i} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden group hover:border-indigo-300 transition-all">
@@ -541,15 +551,16 @@
       const handleGenerate = () => {
         setIsGenerating(true);
         setTimeout(() => {
-          let draft = "## はじめに\n「これから始めてみたいけれど、どこから読めばいいのかしら…」\nそんな風に迷われている方へ向けて、これまでの記事の中から、最初にお読みいただきたいものをいくつか選び、まとめてみました。\n\n## おすすめ記事まとめ\n\n";
+          // 1500文字程度のボリューム感を出すため、丁寧でゆったりとした長めのテキストを生成。末尾にハッシュタグを追加。
+          let draft = "## はじめに\n「これから始めてみたいけれど、どこから読めばいいのかしら…」\nそんな風に迷われている方へ向けて、これまでの記事の中から、最初にお読みいただきたいものをいくつか選び、まとめてみました。\n\n新しいことを始めるとき、情報がたくさんありすぎると、かえって立ち止まってしまうことがありますよね。私も以前は、どこから手をつけていいのか分からず、ただ時間だけが過ぎてしまうことがありました。\n\nですから、今回は「まずここから読んでいただければ安心です」というものを厳選しています。どうぞ、焦らず、ご自身のペースでゆっくりと読み進めてみてくださいね。\n\n## おすすめ記事まとめ\n\n";
           
           urls.forEach((u, i) => {
             draft += `### ${i + 1}. ${u.title}\n`;
-            draft += `この記事では、私なりの工夫や考え方を丁寧にご紹介しています。お時間のある時に、ぜひここから読んでみてくださいね。\n`;
+            draft += `この記事では、具体的なノウハウの前に、まずは心の準備や考え方について丁寧にご紹介しています。\n新しい道具を使うとき、一番大切なのは「難しそう」という気持ちを少しだけ横に置いてみることです。私がどのようにしてその壁を越えたのか、日々のちょっとしたエピソードを交えながらお話ししています。お時間のある時に、ぜひここから読んでみてくださいね。\n`;
             draft += `${u.url}\n\n`;
           });
           
-          draft += "## おわりに\nいかがでしたか？これらの記事が、少しでも皆様の参考になれば嬉しいです。ぜひ、ご自身のペースで実践してみてくださいね！";
+          draft += "## おわりに\nいかがでしたか？\nこれらの記事が、少しでも皆様の参考になり、日々の暮らしに小さな彩りを添えるきっかけになれば嬉しいです。\n\n焦る必要は全くありません。ご自身の心地よいペースで、少しずつ、楽しみながら実践してみてくださいね。これからも、私が試してよかったこと、気づいたことを、この場所でゆっくりとお裾分けしていきたいと思っています。\n\n#暮らしの工夫 #心地よい暮らし #新しい学び #私の小さな挑戦 #AIのある暮らし #ゆとりのある時間 #自分と向き合う";
           setResult(draft);
           setIsGenerating(false);
         }, 1500);
@@ -607,7 +618,7 @@
             className="w-full max-w-2xl mx-auto bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:bg-indigo-300 flex justify-center items-center gap-2 shadow-sm"
           >
             {isGenerating ? <IconLoader className="w-5 h-5 animate-spin" /> : <IconListPlus className="w-5 h-5" />}
-            このリストでまとめ記事の下書きを生成
+            このリストでまとめ記事の下書きを生成する（1500文字程度）
           </button>
 
           {result && (
@@ -616,13 +627,13 @@
                 <div className="bg-indigo-50/50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
                   <span className="font-medium text-indigo-900 flex items-center gap-1"><IconCheckCircle className="w-4 h-4 text-green-600"/>生成完了</span>
                   <button 
-                    onClick={() => copyToClipboard(result)}
+                    onClick={() => copyToClipboard(result, 'まとめ記事をコピーしました！')}
                     className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 px-3 py-1.5 bg-white border border-indigo-200 rounded-lg shadow-sm transition-colors"
                   >
                     <IconCopy className="w-4 h-4" />個別コピー
                   </button>
                 </div>
-                <div className="p-6 whitespace-pre-wrap text-gray-700 font-medium leading-relaxed">
+                <div className="p-6 whitespace-pre-wrap text-gray-700 font-medium leading-relaxed max-h-[400px] overflow-y-auto">
                   {result}
                 </div>
               </div>
