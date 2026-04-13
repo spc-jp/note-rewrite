@@ -168,8 +168,16 @@
       // 一括コピー用テキスト生成
       const getAllContentText = () => {
         if (!generatedResults) return '';
-        let text = '';
         
+        // 1. 最上部に基本情報を追加
+        let text = `■ 基本情報\n`;
+        text += `・元記事URL：${noteUrl}\n`;
+        text += `・アプリ名：${appName}\n`;
+        text += `・アプリURL：${appUrl || '（未入力）'}\n`;
+        text += `・StripeリンクURL：${stripeUrl || '（未入力）'}\n`;
+        text += `\n━━━━━━━━━━━━━━━━━━━━\n\n`;
+        
+        // 2. 続いて、生成された各パターンの記事を追加
         Object.entries(generatedResults).forEach(([key, result]) => {
           let patternName = "";
           if(key === "story") patternName = "ストーリー型（体験談から自然に誘導）";
