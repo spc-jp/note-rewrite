@@ -56,6 +56,7 @@
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-6" id="inputArea">
 
+    <!-- STEP1 -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
@@ -89,34 +90,81 @@
       </div>
     </div>
 
+    <!-- STEP2: あなたの物語（プルダウン+自由記述） -->
     <div class="bg-white rounded-2xl shadow-sm border border-amber-200 overflow-hidden">
       <div class="bg-amber-50 px-6 py-4 border-b border-amber-200">
         <h2 class="text-lg font-bold text-amber-800 flex items-center gap-2">
           <span class="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
           あなたの物語を教えてください（収益化の核心）
         </h2>
-        <p class="text-xs text-amber-700 mt-1">この4つの質問への答えが、読者の心に刺さる記事の核心になります。</p>
+        <p class="text-xs text-amber-700 mt-1">選択肢から選んで、必要なら自分の言葉に書き換えてください。</p>
       </div>
-      <div class="p-6 space-y-5">
+      <div class="p-6 space-y-6">
+
+        <!-- Q1 きっかけ -->
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-1.5">🔥 そのアプリを作ろうと思ったきっかけは？</label>
-          <textarea id="storyTrigger" rows="2" placeholder="例：顧問先の社長が決算書を見ながら途方に暮れている顔を見て、何とかしてあげたいと思った" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 resize-none"></textarea>
+          <label class="block text-sm font-bold text-slate-700 mb-2">🔥 そのアプリを作ろうと思ったきっかけは？</label>
+          <select id="sel_trigger" onchange="handleSelect('trigger')" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 mb-2">
+            <option value="">── 選択してください ──</option>
+            <option value="顧問先の社長が決算書を見ながら途方に暮れている顔を見て、何とかしてあげたいと思ったから">顧問先の社長が決算書を見ながら途方に暮れていたから</option>
+            <option value="自分自身が同じ悩みを抱えていて、どうにかしたいと思ったから">自分自身が同じ悩みを抱えていたから</option>
+            <option value="既存のツールが複雑すぎて、もっとシンプルなものが必要だと感じたから">既存のツールが複雑すぎたから</option>
+            <option value="支援先のお客様から「こんなものがあったらいいのに」と言われたから">お客様から「こんなものが欲しい」と言われたから</option>
+            <option value="AIを使えば自分でも作れると気づき、挑戦してみたくなったから">AIを使えば自分でも作れると気づいたから</option>
+            <option value="custom">自由記述する</option>
+          </select>
+          <textarea id="txt_trigger" rows="2" placeholder="自分の言葉で書いてください" class="hidden w-full px-4 py-3 border border-amber-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 resize-none"></textarea>
         </div>
+
+        <!-- Q2 誰の顔 -->
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-1.5">👤 作るとき、誰の困り顔が浮かびましたか？</label>
-          <textarea id="storyWhoFace" rows="2" placeholder="例：忙しすぎて自分の会社の数字を把握できていない、ひとり社長の顔" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 resize-none"></textarea>
+          <label class="block text-sm font-bold text-slate-700 mb-2">👤 作るとき、誰の困り顔が浮かびましたか？</label>
+          <select id="sel_whoFace" onchange="handleSelect('whoFace')" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 mb-2">
+            <option value="">── 選択してください ──</option>
+            <option value="忙しすぎて自分の会社の数字を把握できていない、ひとり社長">忙しすぎて数字を把握できていないひとり社長</option>
+            <option value="毎日現場に出ながら経営判断も一人でこなしている中小企業の経営者">現場と経営を一人でこなす中小企業の経営者</option>
+            <option value="ITが苦手で新しいツールに踏み出せずにいる事業主">ITが苦手で踏み出せない事業主</option>
+            <option value="顧問先に何か提案したいけれどツールがない税理士・士業の先生">提案ツールがない税理士・士業の先生</option>
+            <option value="SNSや集客に悩んでいる小さなお店のオーナー">SNSや集客に悩む小さなお店のオーナー</option>
+            <option value="custom">自由記述する</option>
+          </select>
+          <textarea id="txt_whoFace" rows="2" placeholder="自分の言葉で書いてください" class="hidden w-full px-4 py-3 border border-amber-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 resize-none"></textarea>
         </div>
+
+        <!-- Q3 最初の気持ち -->
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-1.5">✨ 初めてアプリが動いたとき、どんな気持ちでしたか？</label>
-          <textarea id="storyFirstFeel" rows="2" placeholder="例：「これだ！」と思った。69歳でもこれができるなら、誰でもできると確信した" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 resize-none"></textarea>
+          <label class="block text-sm font-bold text-slate-700 mb-2">✨ 初めてアプリが動いたとき、どんな気持ちでしたか？</label>
+          <select id="sel_firstFeel" onchange="handleSelect('firstFeel')" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 mb-2">
+            <option value="">── 選択してください ──</option>
+            <option value="「これだ！」と思った。69歳でもこれができるなら、誰でもできると確信した">「これだ！」と思った。自分でも作れると確信した</option>
+            <option value="思っていたより早く動いて、思わず声が出てしまった">思っていたより早く動いて、思わず声が出た</option>
+            <option value="画面を見ながら「本当に動いた…」と静かに感動した">画面を見ながら静かに感動した</option>
+            <option value="すぐにお客様に見せたくて、夜中なのに連絡しそうになった">すぐにお客様に見せたくてたまらなかった</option>
+            <option value="「もっと早く作ればよかった」と少し後悔するほど嬉しかった">「もっと早く作ればよかった」と思うほど嬉しかった</option>
+            <option value="custom">自由記述する</option>
+          </select>
+          <textarea id="txt_firstFeel" rows="2" placeholder="自分の言葉で書いてください" class="hidden w-full px-4 py-3 border border-amber-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 resize-none"></textarea>
         </div>
+
+        <!-- Q4 伝えたいこと -->
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-1.5">💌 読者に一番伝えたいことは？</label>
-          <textarea id="storyMessage" rows="2" placeholder="例：難しいことは私が全部やる。あなたはただ使うだけでいい" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 resize-none"></textarea>
+          <label class="block text-sm font-bold text-slate-700 mb-2">💌 読者に一番伝えたいことは？</label>
+          <select id="sel_message" onchange="handleSelect('message')" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 mb-2">
+            <option value="">── 選択してください ──</option>
+            <option value="難しいことは私が全部やる。あなたはただ使うだけでいい">難しいことは私がやる。あなたはただ使うだけでいい</option>
+            <option value="一人で悩まなくていい。AIという強い味方がいる時代になった">一人で悩まなくていい。AIという強い味方がいる</option>
+            <option value="完璧でなくていい。まず使ってみることで見えてくるものがある">まず使ってみることで見えてくるものがある</option>
+            <option value="あなたのビジネスにはまだ気づいていない宝が眠っている">あなたのビジネスにはまだ気づいていない宝がある</option>
+            <option value="小さな一歩が、半年後の大きな差になる">小さな一歩が、半年後の大きな差になる</option>
+            <option value="custom">自由記述する</option>
+          </select>
+          <textarea id="txt_message" rows="2" placeholder="自分の言葉で書いてください" class="hidden w-full px-4 py-3 border border-amber-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 resize-none"></textarea>
         </div>
+
       </div>
     </div>
 
+    <!-- STEP3: 目的・トーン -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
@@ -146,6 +194,7 @@
       </div>
     </div>
 
+    <!-- STEP4: パターン選択 -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
@@ -194,7 +243,6 @@
       <h2 class="text-2xl font-bold text-slate-800">生成が完了しました！</h2>
       <p id="resultMeta" class="text-slate-500 mt-2"></p>
     </div>
-
     <div id="scoreArea" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-6 space-y-3"></div>
     <div id="resultCards" class="space-y-8"></div>
     <div id="snsArea" class="mt-12 pt-10 border-t-2 border-slate-200 space-y-10"></div>
@@ -219,6 +267,28 @@
     var currentGoal = '信頼構築';
     var currentTone = '語りかけ';
     var allCopyText = '';
+
+    // プルダウン選択時の処理
+    function handleSelect(field) {
+      var sel = document.getElementById('sel_' + field);
+      var txt = document.getElementById('txt_' + field);
+      if (sel.value === 'custom') {
+        txt.classList.remove('hidden');
+        txt.value = '';
+        txt.focus();
+      } else {
+        txt.classList.add('hidden');
+        txt.value = sel.value;
+      }
+    }
+
+    // 物語の値を取得（プルダウン or 自由記述）
+    function getStoryValue(field) {
+      var sel = document.getElementById('sel_' + field);
+      var txt = document.getElementById('txt_' + field);
+      if (sel.value === 'custom') return txt.value.trim();
+      return sel.value;
+    }
 
     function selectGoal(btn) {
       document.querySelectorAll('.goal-btn').forEach(function(b) {
@@ -356,10 +426,10 @@
       }
 
       var story = {
-        trigger:   document.getElementById('storyTrigger').value.trim(),
-        whoFace:   document.getElementById('storyWhoFace').value.trim(),
-        firstFeel: document.getElementById('storyFirstFeel').value.trim(),
-        message:   document.getElementById('storyMessage').value.trim(),
+        trigger:   getStoryValue('trigger'),
+        whoFace:   getStoryValue('whoFace'),
+        firstFeel: getStoryValue('firstFeel'),
+        message:   getStoryValue('message'),
       };
 
       document.getElementById('inputArea').classList.add('hidden');
