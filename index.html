@@ -5,461 +5,280 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Note Rewrite & Sales Supporter</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-in { animation: fadeIn 0.5s ease-out forwards; }
-    input[type="checkbox"] { accent-color: #0d9488; }
-  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans">
-  <div id="root"></div>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-24">
 
-  <script type="text/babel">
-    const { useState, useRef } = React;
+  <div class="sticky top-0 z-40 bg-slate-50/90 backdrop-blur-md border-b border-slate-200 pb-4 pt-4 px-6 mb-8 shadow-sm">
+    <div class="max-w-4xl mx-auto relative">
+      <div class="text-center space-y-2">
+        <span class="inline-block px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold tracking-wider rounded-full uppercase">Sales Edition</span>
+        <h1 class="text-2xl md:text-3xl font-bold text-teal-700">Note Rewrite &amp; Sales Supporter</h1>
+        <p class="text-slate-500 text-sm hidden sm:block">過去のnote記事をフックにして、ご自身の商品やアプリを自然に販売するための記事をAIが生成します。</p>
+      </div>
+      <a href="https://note.com/_yoshibon" target="_blank" rel="noopener noreferrer"
+        class="absolute top-0 right-0 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:text-teal-600 shadow-sm">
+        noteを見る
+      </a>
+    </div>
+  </div>
 
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-6" id="inputArea">
+
+    <!-- STEP1 -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
+        <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
+          <span class="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
+          基本情報を入力
+        </h2>
+      </div>
+      <div class="p-6 space-y-5">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">元のnote記事URL <span class="text-red-500">*</span></label>
+          <input id="noteUrl" type="url" placeholder="https://note.com/..." class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-slate-50">
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">販売する商品・アプリの名前 <span class="text-red-500">*</span></label>
+          <input id="appName" type="text" placeholder="例：経営みっけ PRO" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-slate-50">
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">コンセプト・特徴 <span class="text-red-500">*</span></label>
+          <textarea id="appConcept" rows="3" placeholder="例：税理士事務所が顧問先の経営状況をAIで即診断できる、シンプルな無料ツール" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-slate-50 resize-none"></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1.5">商品・アプリのURL（任意）</label>
+            <input id="appUrl" type="url" placeholder="https://..." class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-slate-50">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1.5">購入リンク・StripeURL（任意）</label>
+            <input id="stripeUrl" type="url" placeholder="https://buy.stripe.com/..." class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-slate-50">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP2 -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
+        <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
+          <span class="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
+          記事の目的とトーンを選択
+        </h2>
+      </div>
+      <div class="p-6 space-y-6">
+        <div>
+          <p class="text-sm font-bold text-slate-700 mb-3">記事の目的</p>
+          <div class="flex flex-wrap gap-2" id="goalButtons">
+            <button onclick="selectGoal(this)" data-val="信頼構築" class="goal-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-teal-500 bg-teal-50 text-teal-700">信頼構築</button>
+            <button onclick="selectGoal(this)" data-val="集客問合せ" class="goal-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-slate-200 bg-white text-slate-600">集客問合せ</button>
+            <button onclick="selectGoal(this)" data-val="使い方紹介" class="goal-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-slate-200 bg-white text-slate-600">使い方紹介</button>
+            <button onclick="selectGoal(this)" data-val="開発背景" class="goal-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-slate-200 bg-white text-slate-600">開発背景</button>
+            <button onclick="selectGoal(this)" data-val="クスッと笑える" class="goal-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-slate-200 bg-white text-slate-600">クスッと笑える</button>
+          </div>
+        </div>
+        <div>
+          <p class="text-sm font-bold text-slate-700 mb-3">文章のトーン</p>
+          <div class="flex flex-wrap gap-2" id="toneButtons">
+            <button onclick="selectTone(this)" data-val="語りかけ" class="tone-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-teal-500 bg-teal-50 text-teal-700">語りかけ</button>
+            <button onclick="selectTone(this)" data-val="ストーリー実話" class="tone-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-slate-200 bg-white text-slate-600">ストーリー実話</button>
+            <button onclick="selectTone(this)" data-val="解説風" class="tone-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-slate-200 bg-white text-slate-600">解説風</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP3 -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
+        <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
+          <span class="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span>
+          出力する「構成パターン」を選択（複数可）
+        </h2>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label class="flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer border-teal-500 bg-teal-50/50">
+            <input type="checkbox" id="pat_empathy" checked class="w-5 h-5 mt-0.5" style="accent-color:#0d9488">
+            <div><div class="font-bold text-slate-800">共感風（体験談）</div><p class="text-sm text-slate-500 mt-1">過去の悩みや経験から、アプリ開発の理由を語り、共感を通じて販売へ繋げます。</p></div>
+          </label>
+          <label class="flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer border-slate-100 bg-white">
+            <input type="checkbox" id="pat_knowhow" class="w-5 h-5 mt-0.5" style="accent-color:#0d9488">
+            <div><div class="font-bold text-slate-800">ノウハウ風（価値提供）</div><p class="text-sm text-slate-500 mt-1">役立つ3つの考え方を提供した上で、解決策としてアプリを優しく提案します。</p></div>
+          </label>
+          <label class="flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer border-slate-100 bg-white">
+            <input type="checkbox" id="pat_question" class="w-5 h-5 mt-0.5" style="accent-color:#0d9488">
+            <div><div class="font-bold text-slate-800">問いかけ風（課題解決）</div><p class="text-sm text-slate-500 mt-1">読者の悩みに問いかけ、今のやり方を変える選択肢としてアプリを案内します。</p></div>
+          </label>
+          <label class="flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer border-slate-100 bg-white">
+            <input type="checkbox" id="pat_partner" class="w-5 h-5 mt-0.5" style="accent-color:#0d9488">
+            <div><div class="font-bold text-slate-800">パートナー募集風</div><p class="text-sm text-slate-500 mt-1">同じ想いを持つ方を募る形で、初期ユーザーや購入者へ温かく呼びかけます。</p></div>
+          </label>
+        </div>
+
+        <div id="errorMsg" class="hidden mt-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium"></div>
+
+        <button onclick="handleGenerate()"
+          class="w-full mt-8 bg-teal-600 text-white font-bold py-4 rounded-xl shadow-md hover:bg-teal-700 transition-colors text-lg">
+          ✨ AIがセールス記事を一括生成する
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ローディング -->
+  <div id="loadingArea" class="hidden flex-col items-center justify-center py-20 text-teal-600">
+    <div class="w-12 h-12 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mb-4"></div>
+    <p class="font-bold text-lg">Claudeが執筆しています...</p>
+    <p class="text-sm text-slate-500 mt-2">30〜60秒ほどお待ちください。</p>
+  </div>
+
+  <!-- 結果エリア -->
+  <div id="resultArea" class="hidden max-w-4xl mx-auto px-4 sm:px-6 space-y-8 pt-4">
+    <div class="text-center">
+      <h2 class="text-2xl font-bold text-slate-800">✅ セールス記事の生成が完了しました！</h2>
+      <p id="resultMeta" class="text-slate-500 mt-2"></p>
+    </div>
+    <div id="resultCards" class="space-y-8"></div>
+    <div class="flex justify-center pt-10 border-t border-slate-200 pb-10">
+      <button onclick="handleReset()" class="px-8 py-3 bg-white text-slate-600 font-bold border-2 border-slate-200 rounded-xl hover:border-teal-200 hover:text-teal-600 transition-all shadow-sm">
+        条件入力画面に戻る
+      </button>
+    </div>
+  </div>
+
+  <script>
     const WORKER_URL = 'https://note-rewrite.yymmatsu.workers.dev';
+    let currentGoal = '信頼構築';
+    let currentTone = '語りかけ';
 
-    const IconPen = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>;
-    const IconLoader = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>;
-    const IconCopy = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>;
-    const IconCheckCircle = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
-    const IconSparkles = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.912 5.813a2 2 0 001.275 1.275L21 12l-5.813 1.912a2 2 0 00-1.275 1.275L12 21l-1.912-5.813a2 2 0 00-1.275-1.275L3 12l5.813-1.912a2 2 0 001.275-1.275L12 3z"></path></svg>;
-    const IconSmartphone = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>;
-    const IconImage = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>;
-    const IconBookOpen = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>;
-    const IconLightbulb = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2v1"></path><path d="M4 12h1"></path><path d="M19 12h1"></path><path d="M5.64 5.64l.71.71"></path><path d="M17.66 17.66l.71.71"></path><path d="M5.64 18.36l.71-.71"></path><path d="M17.66 6.34l.71-.71"></path><path d="M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path><path d="M9.17 15a6 6 0 0 1-1.17-3 6 6 0 0 1 12 0 6 6 0 0 1-1.17 3"></path></svg>;
-    const IconHelpCircle = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>;
-    const IconUsers = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>;
-    const IconArrowLeft = ({ className }) => <svg className={className||""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>;
-
-    const showToast = (message, isError = false) => {
-      const toast = document.createElement('div');
-      toast.className = `fixed bottom-6 right-6 px-6 py-4 rounded-xl shadow-2xl z-50 text-sm font-bold flex items-center gap-3 transition-all duration-500 transform translate-y-10 opacity-0 ${isError ? 'bg-red-600 text-white' : 'bg-slate-800 text-white border border-slate-700'}`;
-      toast.innerHTML = isError
-        ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${message}`
-        : `<svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> ${message}`;
-      document.body.appendChild(toast);
-      requestAnimationFrame(() => toast.classList.remove('translate-y-10', 'opacity-0'));
-      setTimeout(() => {
-        toast.classList.add('translate-y-10', 'opacity-0');
-        setTimeout(() => document.body.contains(toast) && document.body.removeChild(toast), 500);
-      }, 3000);
-    };
-
-    const copyToClipboard = (text, message = 'コピーしました！') => {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      try {
-        document.execCommand('copy');
-        showToast(message);
-      } catch (err) {
-        showToast('コピーに失敗しました。', true);
-      }
-      document.body.removeChild(textArea);
-    };
-
-    function App() {
-      const [noteUrl, setNoteUrl] = useState('');
-      const [appName, setAppName] = useState('');
-      const [appUrl, setAppUrl] = useState('');
-      const [appConcept, setAppConcept] = useState('');
-      const [stripeUrl, setStripeUrl] = useState('');
-      const [articleGoal, setArticleGoal] = useState('信頼構築');
-      const [articleTone, setArticleTone] = useState('語りかけ');
-      const [selectedPatterns, setSelectedPatterns] = useState({
-        empathy: true,
-        knowhow: false,
-        question: false,
-        partner: false
+    function selectGoal(btn) {
+      document.querySelectorAll('.goal-btn').forEach(b => {
+        b.className = 'goal-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-slate-200 bg-white text-slate-600';
       });
-      const [isGenerating, setIsGenerating] = useState(false);
-      const [generatedResults, setGeneratedResults] = useState(null);
-      const [errorMessage, setErrorMessage] = useState('');
-      const resultsRef = useRef(null);
+      btn.className = 'goal-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-teal-500 bg-teal-50 text-teal-700';
+      currentGoal = btn.dataset.val;
+    }
 
-      const handleReset = () => {
-        setGeneratedResults(null);
-        setErrorMessage('');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    function selectTone(btn) {
+      document.querySelectorAll('.tone-btn').forEach(b => {
+        b.className = 'tone-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-slate-200 bg-white text-slate-600';
+      });
+      btn.className = 'tone-btn px-4 py-2 rounded-xl border-2 text-sm font-bold border-teal-500 bg-teal-50 text-teal-700';
+      currentTone = btn.dataset.val;
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-6 right-6 px-6 py-4 rounded-xl shadow-2xl z-50 text-sm font-bold transition-all duration-500 ' + (isError ? 'bg-red-600 text-white' : 'bg-slate-800 text-white');
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => document.body.contains(toast) && document.body.removeChild(toast), 3000);
+    }
+
+    function copyText(text, msg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); showToast(msg || 'コピーしました！'); }
+      catch { showToast('コピーに失敗しました', true); }
+      document.body.removeChild(ta);
+    }
+
+    function handleReset() {
+      document.getElementById('inputArea').classList.remove('hidden');
+      document.getElementById('resultArea').classList.add('hidden');
+      document.getElementById('loadingArea').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function handleGenerate() {
+      const noteUrl = document.getElementById('noteUrl').value.trim();
+      const appName = document.getElementById('appName').value.trim();
+      const appConcept = document.getElementById('appConcept').value.trim();
+      const appUrl = document.getElementById('appUrl').value.trim();
+      const stripeUrl = document.getElementById('stripeUrl').value.trim();
+
+      if (!noteUrl || !appName || !appConcept) {
+        alert('「元のnote記事URL」「商品/アプリの名前」「コンセプト」は必須です。');
+        return;
+      }
+
+      const patterns = {
+        empathy: document.getElementById('pat_empathy').checked,
+        knowhow: document.getElementById('pat_knowhow').checked,
+        question: document.getElementById('pat_question').checked,
+        partner: document.getElementById('pat_partner').checked,
       };
 
-      const handleGenerateAll = async () => {
-        if (!noteUrl || !appName || !appConcept) {
-          alert('「元のnote記事URL」「販売する商品/アプリの名前」「そのコンセプト」は最低限入力してください。');
-          return;
-        }
-        setIsGenerating(true);
-        setGeneratedResults(null);
-        setErrorMessage('');
+      if (!Object.values(patterns).some(v => v)) {
+        alert('パターンを1つ以上選択してください。');
+        return;
+      }
 
-        try {
-          const response = await fetch(WORKER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              noteUrl, appName, appUrl, stripeUrl,
-              appConcept, articleGoal, articleTone,
-              patterns: selectedPatterns,
-            }),
-          });
+      document.getElementById('inputArea').classList.add('hidden');
+      document.getElementById('resultArea').classList.add('hidden');
+      const loadingArea = document.getElementById('loadingArea');
+      loadingArea.classList.remove('hidden');
+      loadingArea.classList.add('flex');
 
-          if (!response.ok) {
-            const err = await response.json();
-            throw new Error(err.error || 'HTTP ' + response.status);
-          }
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ noteUrl, appName, appUrl, stripeUrl, appConcept, articleGoal: currentGoal, articleTone: currentTone, patterns }),
+        });
 
-          const data = await response.json();
-          setGeneratedResults(data);
-          setTimeout(() => {
-            resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 100);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
 
-        } catch (err) {
-          setErrorMessage('生成に失敗しました: ' + err.message);
-          showToast('生成に失敗しました。しばらく待ってから再試行してください。', true);
-        } finally {
-          setIsGenerating(false);
-        }
-      };
+        loadingArea.classList.add('hidden');
+        loadingArea.classList.remove('flex');
 
-      const getAllContentText = () => {
-        if (!generatedResults) return '';
-        let text = '■ 基本情報・設定\n';
-        text += '・元記事URL：' + noteUrl + '\n';
-        text += '・アプリ名：' + appName + '\n';
-        text += '・アプリURL：' + (appUrl || '（未入力）') + '\n';
-        text += '・StripeリンクURL：' + (stripeUrl || '（未入力）') + '\n';
-        text += '・記事の目的：' + articleGoal + '\n';
-        text += '・文章のトーン：' + articleTone + '\n';
-        text += '\n━━━━━━━━━━━━━━━━━━━━\n\n';
+        document.getElementById('resultMeta').textContent = '「' + currentGoal + '」の目的で、「' + currentTone + '」トーンをベースに作成しました。';
+
         const keyMap = {
           empathy: '共感風（体験談から自然に誘導）',
           knowhow: 'ノウハウ風（お役立ち情報から誘導）',
           question: '問いかけ風（悩みに寄り添い誘導）',
           partner: 'パートナー募集風（想いを共有して誘導）',
         };
-        Object.entries(generatedResults).forEach(([key, result]) => {
-          if (key === 'shortCatchCopy') return;
-          if (!result || !result.title) return;
-          text += '■ 【' + (keyMap[key] || key) + '】\nタイトル：' + result.title + '\n\n' + result.content + '\n\n━━━━━━━━━━━━━━━━━━━━\n\n';
+
+        const cards = document.getElementById('resultCards');
+        cards.innerHTML = '';
+
+        ['empathy', 'knowhow', 'question', 'partner'].forEach(key => {
+          if (!data[key]) return;
+          const r = data[key];
+          const fullText = r.title + '\n\n' + r.content;
+          const card = document.createElement('div');
+          card.className = 'bg-white rounded-xl shadow-sm border border-teal-100 overflow-hidden';
+          card.innerHTML =
+            '<div class="bg-teal-50/60 px-5 py-4 border-b border-teal-100 flex justify-between items-center">' +
+              '<span class="font-bold text-teal-900">' + (keyMap[key] || key) + '</span>' +
+              '<button class="text-teal-700 text-sm font-bold px-3 py-1.5 bg-white border border-teal-200 rounded-lg" onclick="copyText(' + JSON.stringify(fullText) + ', \'記事をコピーしました！\')">コピー</button>' +
+            '</div>' +
+            '<div class="p-6">' +
+              '<h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-3">' + r.title + '</h3>' +
+              '<div class="whitespace-pre-wrap text-slate-700 leading-relaxed max-h-96 overflow-y-auto">' + r.content + '</div>' +
+            '</div>';
+          cards.appendChild(card);
         });
-        return text.trim();
-      };
 
-      const isNoPatternSelected = !Object.values(selectedPatterns).some(v => v);
+        document.getElementById('resultArea').classList.remove('hidden');
+        document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
 
-      return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-24">
-
-          <div className="sticky top-0 z-40 bg-slate-50/90 backdrop-blur-md border-b border-slate-200/80 pb-4 pt-4 sm:pt-6 px-6 mb-8 shadow-sm">
-            <div className="max-w-4xl mx-auto relative">
-              <div className="text-center space-y-2">
-                <div>
-                  <span className="inline-block px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold tracking-wider rounded-full uppercase">Sales Edition</span>
-                </div>
-                <h1
-                  className="text-xl sm:text-2xl md:text-3xl font-bold text-teal-700 flex items-center justify-center gap-2 cursor-pointer hover:text-teal-600 transition-colors select-none"
-                  onClick={handleReset}
-                  title="クリックで最初に戻ります"
-                >
-                  <IconPen className="w-6 h-6 sm:w-7 sm:h-7" />
-                  Note Rewrite &amp; Sales Supporter
-                </h1>
-                <p className="text-slate-500 text-xs sm:text-sm hidden sm:block">
-                  過去のnote記事をフックにして、ご自身の商品やアプリを自然に販売するための記事をAIが生成します。
-                </p>
-              </div>
-              
-                href="https://note.com/_yoshibon"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="absolute top-0 right-0 flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:text-teal-600 hover:border-teal-300 shadow-sm transition-all"
-              >
-                noteを見る
-              </a>
-            </div>
-          </div>
-
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-6">
-
-            {!generatedResults && (
-              <div className="space-y-6">
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden animate-in">
-                  <div className="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
-                    <h2 className="text-lg font-bold text-slate-700 flex items-center gap-2">
-                      <span className="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
-                      基本情報を入力
-                    </h2>
-                  </div>
-                  <div className="p-6 md:p-8 space-y-5">
-                    <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1.5">元のnote記事URL <span className="text-red-500">*</span></label>
-                      <input type="url" value={noteUrl} onChange={e => setNoteUrl(e.target.value)} placeholder="https://note.com/..." className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-slate-50" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1.5">販売する商品・アプリの名前 <span className="text-red-500">*</span></label>
-                      <input type="text" value={appName} onChange={e => setAppName(e.target.value)} placeholder="例：経営みっけ PRO" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-slate-50" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1.5">コンセプト・特徴 <span className="text-red-500">*</span></label>
-                      <textarea value={appConcept} onChange={e => setAppConcept(e.target.value)} placeholder="例：税理士事務所が顧問先の経営状況をAIで即診断できる、シンプルな無料ツール" rows={3} className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-slate-50 resize-none" />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-1.5">商品・アプリのURL（任意）</label>
-                        <input type="url" value={appUrl} onChange={e => setAppUrl(e.target.value)} placeholder="https://..." className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-slate-50" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-1.5">購入リンク・StripeURL（任意）</label>
-                        <input type="url" value={stripeUrl} onChange={e => setStripeUrl(e.target.value)} placeholder="https://buy.stripe.com/..." className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-slate-50" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden animate-in">
-                  <div className="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
-                    <h2 className="text-lg font-bold text-slate-700 flex items-center gap-2">
-                      <span className="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
-                      記事の目的とトーンを選択
-                    </h2>
-                  </div>
-                  <div className="p-6 md:p-8 space-y-6">
-                    <div>
-                      <p className="text-sm font-bold text-slate-700 mb-3">記事の目的</p>
-                      <div className="flex flex-wrap gap-2">
-                        {['信頼構築', '集客問合せ', '使い方紹介', '開発背景', 'クスッと笑える'].map(goal => (
-                          <button
-                            key={goal}
-                            onClick={() => setArticleGoal(goal)}
-                            className={'px-4 py-2 rounded-xl border-2 text-sm font-bold transition-all ' + (articleGoal === goal ? 'border-teal-500 bg-teal-50 text-teal-700' : 'border-slate-200 bg-white text-slate-600 hover:border-teal-200')}
-                          >
-                            {goal}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-slate-700 mb-3">文章のトーン</p>
-                      <div className="flex flex-wrap gap-2">
-                        {['語りかけ', 'ストーリー実話', '解説風'].map(tone => (
-                          <button
-                            key={tone}
-                            onClick={() => setArticleTone(tone)}
-                            className={'px-4 py-2 rounded-xl border-2 text-sm font-bold transition-all ' + (articleTone === tone ? 'border-teal-500 bg-teal-50 text-teal-700' : 'border-slate-200 bg-white text-slate-600 hover:border-teal-200')}
-                          >
-                            {tone}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden animate-in">
-                  <div className="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
-                    <h2 className="text-lg font-bold text-slate-700 flex items-center gap-2">
-                      <span className="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span>
-                      出力する「構成パターン」を選択（複数可）
-                    </h2>
-                  </div>
-                  <div className="p-6 md:p-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <PatternToggle icon={<IconBookOpen />} label="共感風（体験談）" description="ご自身の過去の悩みや経験から、アプリ開発の理由を語り、共感を通じて自然に販売へ繋げます。" checked={selectedPatterns.empathy} onChange={c => setSelectedPatterns({...selectedPatterns, empathy: c})} />
-                      <PatternToggle icon={<IconLightbulb />} label="ノウハウ風（価値提供）" description="読者に役立つ3つの考え方を提供した上で、最後の解決策としてアプリを優しく提案します。" checked={selectedPatterns.knowhow} onChange={c => setSelectedPatterns({...selectedPatterns, knowhow: c})} />
-                      <PatternToggle icon={<IconHelpCircle />} label="問いかけ風（課題解決）" description="読者の現状の悩みに問いかけ、今のやり方を変えるひとつの選択肢としてアプリを案内します。" checked={selectedPatterns.question} onChange={c => setSelectedPatterns({...selectedPatterns, question: c})} />
-                      <PatternToggle icon={<IconUsers />} label="パートナー募集風" description="同じ想いを持つ方を募る形で、ツールの初期ユーザーや購入者へ温かく呼びかけます。" checked={selectedPatterns.partner} onChange={c => setSelectedPatterns({...selectedPatterns, partner: c})} />
-                    </div>
-
-                    {errorMessage && (
-                      <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
-                        {errorMessage}
-                      </div>
-                    )}
-
-                    <button
-                      onClick={handleGenerateAll}
-                      disabled={isNoPatternSelected || !noteUrl || !appName || !appConcept || isGenerating}
-                      className="w-full mt-8 bg-teal-600 text-white font-bold py-4 rounded-xl shadow-md hover:bg-teal-700 transition-colors flex justify-center items-center gap-2 text-lg disabled:bg-slate-300 disabled:cursor-not-allowed"
-                    >
-                      <IconSparkles className="w-6 h-6" />
-                      AIがセールス記事を一括生成する
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {isGenerating && (
-              <div className="flex flex-col items-center justify-center py-20 text-teal-600 animate-in">
-                <IconLoader className="w-12 h-12 animate-spin mb-4" />
-                <p className="font-bold text-lg">Claudeが目的とトーンに合わせて執筆しています...</p>
-                <p className="text-sm text-slate-500 mt-2">各パターン約1500文字を生成中です。30〜60秒ほどお待ちください。</p>
-              </div>
-            )}
-
-            {generatedResults && (
-              <div ref={resultsRef} className="space-y-8 pt-4 animate-in">
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-slate-800 flex items-center justify-center gap-2">
-                    <IconCheckCircle className="w-8 h-8 text-teal-500" />
-                    セールス記事の生成が完了しました！
-                  </h2>
-                  <p className="text-slate-500 mt-2">「{articleGoal}」の目的で、「{articleTone}」トーンをベースに作成しました。</p>
-                </div>
-
-                {generatedResults.empathy && <ResultSection title="共感風（体験談から自然に誘導）" icon={<IconBookOpen />} result={generatedResults.empathy} />}
-                {generatedResults.knowhow && <ResultSection title="ノウハウ風（お役立ち情報から誘導）" icon={<IconLightbulb />} result={generatedResults.knowhow} />}
-                {generatedResults.question && <ResultSection title="問いかけ風（悩みに寄り添い誘導）" icon={<IconHelpCircle />} result={generatedResults.question} />}
-                {generatedResults.partner && <ResultSection title="パートナー募集風（想いを共有して誘導）" icon={<IconUsers />} result={generatedResults.partner} />}
-
-                <SnsAndImageTemplates appName={appName} shortCatchCopy={generatedResults.shortCatchCopy} mainContentText={getAllContentText()} />
-
-                <div className="flex justify-center pt-10 border-t border-slate-200 pb-10">
-                  <button onClick={handleReset} className="flex items-center justify-center gap-2 px-8 py-3 bg-white text-slate-600 font-bold border-2 border-slate-200 rounded-xl hover:bg-slate-50 hover:text-teal-600 hover:border-teal-200 transition-all shadow-sm">
-                    <IconArrowLeft className="w-5 h-5" />
-                    条件入力画面に戻る
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      );
+      } catch (err) {
+        loadingArea.classList.add('hidden');
+        loadingArea.classList.remove('flex');
+        document.getElementById('inputArea').classList.remove('hidden');
+        const errDiv = document.getElementById('errorMsg');
+        errDiv.textContent = '生成に失敗しました: ' + err.message;
+        errDiv.classList.remove('hidden');
+        showToast('生成に失敗しました', true);
+      }
     }
-
-    const PatternToggle = ({ icon, label, description, checked, onChange }) => (
-      <label className={'flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer transition-all duration-200 ' + (checked ? 'border-teal-500 bg-teal-50/50 shadow-sm' : 'border-slate-100 bg-white hover:border-teal-200 hover:bg-slate-50')}>
-        <div className="mt-0.5">
-          <input type="checkbox" className="w-5 h-5 cursor-pointer" checked={checked} onChange={e => onChange(e.target.checked)} />
-        </div>
-        <div className="flex-1">
-          <div className="font-bold text-slate-800 flex items-center gap-2">
-            {React.cloneElement(icon, {className: 'w-5 h-5 ' + (checked ? 'text-teal-600' : 'text-slate-400')})}
-            {label}
-          </div>
-          <p className="text-sm text-slate-500 mt-1.5 leading-relaxed">{description}</p>
-        </div>
-      </label>
-    );
-
-    const ResultSection = ({ title, icon, result }) => {
-      const fullText = result.title + '\n\n' + result.content;
-      return (
-        <div className="bg-white rounded-xl shadow-sm border border-teal-100 overflow-hidden">
-          <div className="bg-teal-50/60 px-5 py-4 border-b border-teal-100 flex justify-between items-center">
-            <span className="font-bold text-teal-900 flex items-center gap-2">
-              {React.cloneElement(icon, {className: 'w-5 h-5'})}
-              {title}
-            </span>
-            <button onClick={() => copyToClipboard(fullText, '記事をコピーしました！')} className="text-teal-700 hover:text-teal-900 text-sm font-bold flex items-center gap-1.5 px-3 py-1.5 bg-white border border-teal-200 rounded-lg shadow-sm transition-colors">
-              <IconCopy className="w-4 h-4" />この記事をコピー
-            </button>
-          </div>
-          <div className="p-6 md:p-8">
-            <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-4">{result.title}</h3>
-            <div className="whitespace-pre-wrap text-slate-700 font-medium leading-relaxed max-h-[600px] overflow-y-auto pr-2">
-              {result.content}
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    function SnsAndImageTemplates({ appName, shortCatchCopy, mainContentText }) {
-      const displayAppName = appName || '私の新しいツール';
-      const displayCatchCopy = shortCatchCopy || '日々のゆとりを生み出す相棒';
-
-      const snsTemplates = [
-        {
-          label: 'パターン① 共感型（寄り添い）',
-          text: '「もっと早く知っていれば…」\n\n私も最初は難しくて戸惑っていましたが、あることに気づいてから景色が少し変わりました。\n\nその体験から生まれた『' + displayAppName + '』について、noteに想いを綴りました👇\n\n[記事URLをここに貼り付け]'
-        },
-        {
-          label: 'パターン② ノウハウ（お裾分け）',
-          text: '日々の負担をそっと手放すための3つの考え方。\n\n1. 自分で抱え込まない\n2. 完璧より心地よさ\n3. 相棒となる道具に頼る\n\n私が作った優しい相棒『' + displayAppName + '』のご案内も添えて、noteにまとめました👇\n\n[記事URLをここに貼り付け]'
-        },
-        {
-          label: 'パターン③ 問いかけ型（穏やか）',
-          text: 'ふと振り返ったとき、どちらを選びたいですか？\n\nA：これまで通り、時間をかけて頑張る\nB：新しい道具を取り入れて、心にゆとりを持つ\n\nもし「B」に惹かれた方は、私が作った『' + displayAppName + '』が少しお役に立てるかもしれません。詳細はこちら👇\n\n[記事URLをここに貼り付け]'
-        },
-        {
-          label: 'パターン④ パートナー募集',
-          text: '【お知らせ】同じ想いを持つ方を募集しています。\n\n誰もが無理なく使えるように、という願いを込めて『' + displayAppName + '』を作りました。\n\n一緒にこの道具を育ててくださる方、ぜひnoteの詳しい想いをお読みいただければ幸いです👇\n\n[記事URLをここに貼り付け]'
-        }
-      ];
-
-      const midjourneyPrompt = 'A professional Japanese blog header image, dark navy blue gradient background (#1a2e5a to #2a4d9e), glowing abstract icons representing safety and trust, subtle circuit board texture overlay, clean modern UI elements, bold white Japanese typography reading "' + displayAppName + '" and "' + displayCatchCopy + '", gold accent highlights (#e8b830), soft blue glow effects, trustworthy and professional atmosphere, banner format, 8k resolution, highly detailed --ar 1.91:1 --v 6.0';
-
-      const handleCopyAll = () => {
-        const snsText = snsTemplates.map(t => '【' + t.label + '】\n' + t.text).join('\n\n------------------------\n\n');
-        const fullText = mainContentText + '\n━━━━━━━━━━━━━━━━━━━━\n\n■ SNS誘導テンプレ\n\n' + snsText + '\n\n━━━━━━━━━━━━━━━━━━━━\n\n■ 見出し画像用 Midjourneyプロンプト\n\n' + midjourneyPrompt;
-        copyToClipboard(fullText, '生成されたすべての内容を一括コピーしました！');
-      };
-
-      return (
-        <div className="mt-12 pt-10 border-t-2 border-slate-200 space-y-10">
-          <div className="bg-teal-50 border border-teal-100 rounded-2xl p-6 text-center shadow-sm">
-            <h3 className="text-lg font-bold text-teal-900 mb-2">すべての準備が整いました！</h3>
-            <p className="text-sm text-teal-700 mb-6">生成されたセールス記事、集客用のSNSテンプレ、見出し画像用プロンプトをまとめてコピーできます。</p>
-            <button onClick={handleCopyAll} className="bg-slate-800 text-white px-8 py-4 rounded-xl inline-flex items-center justify-center gap-3 text-base font-bold hover:bg-slate-900 transition-colors shadow-md">
-              <IconCopy className="w-6 h-6" /> 全て一括でコピーする（生成文・SNS・画像P）
-            </button>
-          </div>
-
-          <div>
-            <h4 className="text-xl font-bold text-slate-800 flex items-center gap-2 mb-4">
-              <IconSmartphone className="w-6 h-6 text-teal-600" />
-              SNSでnoteへ誘導する文面テンプレ
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {snsTemplates.map((t, i) => (
-                <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm group hover:border-teal-300 transition-colors flex flex-col">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded">{t.label}</span>
-                    <button className="text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-medium px-3 py-1.5 bg-teal-50 hover:bg-teal-100 rounded-lg flex items-center gap-1" onClick={() => copyToClipboard(t.text, 'SNSテンプレをコピーしました！')}>
-                      <IconCopy className="w-3 h-3" />個別コピー
-                    </button>
-                  </div>
-                  <div className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed flex-1 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                    {t.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-xl font-bold text-slate-800 flex items-center gap-2 mb-2">
-              <IconImage className="w-6 h-6 text-teal-600" />
-              note見出し画像用 Midjourneyプロンプト
-            </h4>
-            <div className="mt-3 inline-block bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 mb-4">
-              AI考案サブキャッチ：<span className="text-teal-600">「{displayCatchCopy}」</span>
-            </div>
-            <div className="bg-slate-900 rounded-xl p-5 shadow-inner relative group">
-              <button className="absolute top-4 right-4 text-slate-300 hover:text-white text-xs font-medium px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center gap-1 transition-colors" onClick={() => copyToClipboard(midjourneyPrompt, 'プロンプトをコピーしました！')}>
-                <IconCopy className="w-4 h-4" />個別コピー
-              </button>
-              <p className="text-slate-300 text-sm font-mono leading-relaxed pr-20 break-all">
-                {midjourneyPrompt}
-              </p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
   </script>
 </body>
 </html>
