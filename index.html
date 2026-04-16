@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .article-body h2 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 800;
       color: #0f766e;
       border-left: 4px solid #0d9488;
@@ -24,7 +24,7 @@
     }
     .article-body p {
       margin-bottom: 0.85rem;
-      line-height: 1.85;
+      line-height: 1.9;
       color: #334155;
     }
     .article-body .hashtags {
@@ -34,17 +34,19 @@
       color: #0d9488;
       font-weight: 600;
       font-size: 0.9rem;
+      letter-spacing: 0.03em;
     }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen pb-24">
 
+  <!-- ヘッダー -->
   <div class="sticky top-0 z-40 bg-slate-50/90 backdrop-blur-md border-b border-slate-200 pb-4 pt-4 px-6 mb-8 shadow-sm">
     <div class="max-w-4xl mx-auto relative">
       <div class="text-center space-y-2">
-        <span class="inline-block px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold tracking-wider rounded-full uppercase">Sales Edition</span>
+        <span class="inline-block px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold tracking-wider rounded-full uppercase">note収益化 Edition</span>
         <h1 class="text-2xl md:text-3xl font-bold text-teal-700">Note Rewrite &amp; Sales Supporter</h1>
-        <p class="text-slate-500 text-sm hidden sm:block">過去のnote記事をフックにして、ご自身の商品やアプリを自然に販売するための記事をAIが生成します。</p>
+        <p class="text-slate-500 text-sm hidden sm:block">あなたの物語を核心に、noteリライト・SNS集客投稿・サムネプロンプトをAIが一括生成します。</p>
       </div>
       <a href="https://note.com/_yoshibon" target="_blank" rel="noopener noreferrer"
         class="absolute top-0 right-0 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:text-teal-600 shadow-sm">
@@ -55,6 +57,7 @@
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-6" id="inputArea">
 
+    <!-- STEP1: 基本情報 -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
@@ -88,10 +91,40 @@
       </div>
     </div>
 
+    <!-- STEP2: あなたの物語（NEW） -->
+    <div class="bg-white rounded-2xl shadow-sm border border-amber-200 overflow-hidden">
+      <div class="bg-amber-50 px-6 py-4 border-b border-amber-200">
+        <h2 class="text-lg font-bold text-amber-800 flex items-center gap-2">
+          <span class="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
+          💛 あなたの物語を教えてください（収益化の核心）
+        </h2>
+        <p class="text-xs text-amber-700 mt-1">この4つの質問への答えが、読者の心に刺さる記事の核心になります。</p>
+      </div>
+      <div class="p-6 space-y-5">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">🔥 そのアプリを作ろうと思ったきっかけは？</label>
+          <textarea id="storyTrigger" rows="2" placeholder="例：顧問先の社長が決算書を見ながら途方に暮れている顔を見て、何とかしてあげたいと思った" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">👤 作るとき、誰の困り顔が浮かびましたか？</label>
+          <textarea id="storyWhoFace" rows="2" placeholder="例：忙しすぎて自分の会社の数字を把握できていない、ひとり社長の顔" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">✨ 初めてアプリが動いたとき、どんな気持ちでしたか？</label>
+          <textarea id="storyFirstFeel" rows="2" placeholder="例：「これだ！」と思った。69歳でもこれができるなら、誰でもできると確信した" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">💌 読者に一番伝えたいことは？</label>
+          <textarea id="storyMessage" rows="2" placeholder="例：難しいことは私が全部やる。あなたはただ使うだけでいい" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 resize-none"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP3: 目的・トーン -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
-          <span class="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
+          <span class="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span>
           記事の目的とトーンを選択
         </h2>
       </div>
@@ -117,10 +150,11 @@
       </div>
     </div>
 
+    <!-- STEP4: パターン選択 -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
-          <span class="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span>
+          <span class="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">4</span>
           出力する「構成パターン」を選択（複数可）
         </h2>
       </div>
@@ -128,19 +162,19 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <label class="flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer border-teal-500 bg-teal-50/50">
             <input type="checkbox" id="pat_empathy" checked class="w-5 h-5 mt-0.5" style="accent-color:#0d9488">
-            <div><div class="font-bold text-slate-800">共感風（体験談）</div><p class="text-sm text-slate-500 mt-1">過去の悩みや経験から、アプリ開発の理由を語り、共感を通じて販売へ繋げます。</p></div>
+            <div><div class="font-bold text-slate-800">共感風（体験談）</div><p class="text-sm text-slate-500 mt-1">過去の悩みや経験から、共感を通じて販売へ繋げます。</p></div>
           </label>
           <label class="flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer border-slate-100 bg-white">
             <input type="checkbox" id="pat_knowhow" class="w-5 h-5 mt-0.5" style="accent-color:#0d9488">
-            <div><div class="font-bold text-slate-800">ノウハウ風（価値提供）</div><p class="text-sm text-slate-500 mt-1">役立つ3つの考え方を提供した上で、解決策としてアプリを優しく提案します。</p></div>
+            <div><div class="font-bold text-slate-800">ノウハウ風（価値提供）</div><p class="text-sm text-slate-500 mt-1">役立つ考え方を提供した上で、解決策としてアプリを提案します。</p></div>
           </label>
           <label class="flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer border-slate-100 bg-white">
             <input type="checkbox" id="pat_question" class="w-5 h-5 mt-0.5" style="accent-color:#0d9488">
-            <div><div class="font-bold text-slate-800">問いかけ風（課題解決）</div><p class="text-sm text-slate-500 mt-1">読者の悩みに問いかけ、今のやり方を変える選択肢としてアプリを案内します。</p></div>
+            <div><div class="font-bold text-slate-800">問いかけ風（課題解決）</div><p class="text-sm text-slate-500 mt-1">読者の悩みに問いかけ、選択肢としてアプリを案内します。</p></div>
           </label>
           <label class="flex items-start gap-4 p-5 rounded-xl border-2 cursor-pointer border-slate-100 bg-white">
             <input type="checkbox" id="pat_partner" class="w-5 h-5 mt-0.5" style="accent-color:#0d9488">
-            <div><div class="font-bold text-slate-800">パートナー募集風</div><p class="text-sm text-slate-500 mt-1">同じ想いを持つ方を募る形で、初期ユーザーや購入者へ温かく呼びかけます。</p></div>
+            <div><div class="font-bold text-slate-800">パートナー募集風</div><p class="text-sm text-slate-500 mt-1">同じ想いを持つ方を募る形で温かく呼びかけます。</p></div>
           </label>
         </div>
 
@@ -154,26 +188,35 @@
     </div>
   </div>
 
+  <!-- ローディング -->
   <div id="loadingArea" class="hidden max-w-4xl mx-auto px-4 py-20 text-center text-teal-600">
     <div class="w-12 h-12 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-4"></div>
-    <p class="font-bold text-lg">Claudeが執筆しています...</p>
+    <p class="font-bold text-lg">Claudeがあなたの物語を織り込んで執筆しています...</p>
     <p class="text-sm text-slate-500 mt-2">30〜60秒ほどお待ちください。</p>
   </div>
 
+  <!-- 結果エリア -->
   <div id="resultArea" class="hidden max-w-4xl mx-auto px-4 sm:px-6 space-y-8 pt-4">
     <div class="text-center">
-      <h2 class="text-2xl font-bold text-slate-800">✅ セールス記事の生成が完了しました！</h2>
+      <h2 class="text-2xl font-bold text-slate-800">✅ 生成が完了しました！</h2>
       <p id="resultMeta" class="text-slate-500 mt-2"></p>
     </div>
 
+    <!-- 診断スコア -->
+    <div id="scoreArea" class="bg-amber-50 border border-amber-200 rounded-2xl p-6 space-y-3"></div>
+
+    <!-- note記事 -->
     <div id="resultCards" class="space-y-8"></div>
+
+    <!-- SNSエリア -->
     <div id="snsArea" class="mt-12 pt-10 border-t-2 border-slate-200 space-y-10"></div>
 
+    <!-- 一括コピー -->
     <div class="bg-teal-50 border border-teal-100 rounded-2xl p-6 text-center shadow-sm">
       <h3 class="text-lg font-bold text-teal-900 mb-2">すべての準備が整いました！</h3>
-      <p class="text-sm text-teal-700 mb-6">記事・SNS投稿テンプレ・Midjourneyプロンプトをまとめてコピーできます。</p>
+      <p class="text-sm text-teal-700 mb-6">記事・Threads・X・Midjourneyプロンプトをまとめてコピーできます。</p>
       <button onclick="copyAll()" class="bg-slate-800 text-white px-8 py-4 rounded-xl text-base font-bold hover:bg-slate-900 transition-colors shadow-md">
-        📋 全て一括でコピーする（記事・SNS・画像P）
+        📋 全て一括でコピーする
       </button>
     </div>
 
@@ -185,7 +228,7 @@
   </div>
 
   <script>
-    const WORKER_URL = 'https://note-rewrite.yymmatsu.workers.dev';
+    var WORKER_URL = 'https://note-rewrite.yymmatsu.workers.dev';
     var currentGoal = '信頼構築';
     var currentTone = '語りかけ';
     var allCopyText = '';
@@ -231,9 +274,7 @@
       document.body.removeChild(ta);
     }
 
-    function copyAll() {
-      copyText(allCopyText, '全てコピーしました！');
-    }
+    function copyAll() { copyText(allCopyText, '全てコピーしました！'); }
 
     function handleReset() {
       document.getElementById('inputArea').classList.remove('hidden');
@@ -243,27 +284,19 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // markdownをHTMLに変換（## ### p ハッシュタグ対応）
     function markdownToHtml(text) {
       var lines = text.split('\n');
       var html = '';
-      var inHashtag = false;
-
       for (var i = 0; i < lines.length; i++) {
         var line = lines[i];
-
-        // ハッシュタグ行の検出（#で始まる単語が並ぶ行）
-        if (/^(#[^\s#]+\s*)+$/.test(line.trim())) {
+        if (/^(#[^\s#]+\s*)+$/.test(line.trim()) && line.trim().indexOf(' ') === -1) {
           html += '<div class="hashtags">' + line.trim() + '</div>';
-          continue;
-        }
-
-        if (line.startsWith('## ')) {
+        } else if (line.startsWith('## ')) {
           html += '<h2>' + line.replace('## ', '') + '</h2>';
         } else if (line.startsWith('### ')) {
           html += '<h3>' + line.replace('### ', '') + '</h3>';
         } else if (line.trim() === '') {
-          // 空行はスキップ
+          // skip
         } else {
           html += '<p>' + line + '</p>';
         }
@@ -295,6 +328,13 @@
         return;
       }
 
+      var story = {
+        trigger:   document.getElementById('storyTrigger').value.trim(),
+        whoFace:   document.getElementById('storyWhoFace').value.trim(),
+        firstFeel: document.getElementById('storyFirstFeel').value.trim(),
+        message:   document.getElementById('storyMessage').value.trim(),
+      };
+
       document.getElementById('inputArea').classList.add('hidden');
       document.getElementById('resultArea').classList.add('hidden');
       document.getElementById('loadingArea').classList.remove('hidden');
@@ -307,7 +347,7 @@
             noteUrl: noteUrl, appName: appName, appUrl: appUrl,
             stripeUrl: stripeUrl, appConcept: appConcept,
             articleGoal: currentGoal, articleTone: currentTone,
-            patterns: patterns
+            patterns: patterns, story: story
           }),
         });
 
@@ -317,6 +357,22 @@
         document.getElementById('loadingArea').classList.add('hidden');
         document.getElementById('resultMeta').textContent = '「' + currentGoal + '」の目的で、「' + currentTone + '」トーンをベースに作成しました。';
 
+        // 診断スコア表示
+        var scoreArea = document.getElementById('scoreArea');
+        if (data.score) {
+          var s = data.score;
+          scoreArea.innerHTML =
+            '<h3 class="text-lg font-bold text-amber-800 mb-3">📊 あなたの記事への診断アドバイス</h3>' +
+            '<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">' +
+              '<div class="bg-white rounded-xl p-4 border border-amber-100"><div class="text-xs font-bold text-amber-600 mb-1">タイトルの引力</div><div class="text-sm text-slate-700">' + (s.title || '') + '</div></div>' +
+              '<div class="bg-white rounded-xl p-4 border border-amber-100"><div class="text-xs font-bold text-amber-600 mb-1">冒頭の掴み</div><div class="text-sm text-slate-700">' + (s.hook || '') + '</div></div>' +
+              '<div class="bg-white rounded-xl p-4 border border-amber-100"><div class="text-xs font-bold text-amber-600 mb-1">購入誘導の自然さ</div><div class="text-sm text-slate-700">' + (s.cta || '') + '</div></div>' +
+            '</div>' +
+            '<div class="bg-teal-50 rounded-xl p-4 border border-teal-200"><div class="text-xs font-bold text-teal-700 mb-1">💡 収益化アドバイス</div><div class="text-sm text-teal-900 font-medium">' + (s.advice || '') + '</div></div>';
+          scoreArea.classList.remove('hidden');
+        }
+
+        // note記事カード
         var keyMap = {
           empathy: '共感風（体験談から自然に誘導）',
           knowhow: 'ノウハウ風（お役立ち情報から誘導）',
@@ -341,7 +397,7 @@
 
           var header = document.createElement('div');
           header.className = 'bg-teal-50 px-5 py-4 border-b border-teal-100 flex justify-between items-center';
-          header.innerHTML = '<span class="font-bold text-teal-900">' + (keyMap[key] || key) + '</span>';
+          header.innerHTML = '<span class="font-bold text-teal-900">📝 ' + (keyMap[key] || key) + '</span>';
 
           var copyBtn = document.createElement('button');
           copyBtn.className = 'text-teal-700 text-sm font-bold px-3 py-1.5 bg-white border border-teal-200 rounded-lg hover:bg-teal-50';
@@ -354,13 +410,11 @@
           var body = document.createElement('div');
           body.className = 'p-6';
 
-          // タイトル表示
-          var titleEl = document.createElement('h3');
+          var titleEl = document.createElement('div');
           titleEl.className = 'text-xl font-bold text-slate-800 mb-6 pb-4 border-b border-slate-200';
           titleEl.textContent = r.title;
           body.appendChild(titleEl);
 
-          // 本文（markdown変換して表示）
           var articleDiv = document.createElement('div');
           articleDiv.className = 'article-body max-h-[600px] overflow-y-auto pr-2';
           articleDiv.innerHTML = markdownToHtml(r.content);
@@ -371,99 +425,86 @@
           cards.appendChild(card);
         }
 
-        // SNSテンプレ生成
+        // SNSエリア
         var displayName = appName || '私の新しいツール';
         var catchCopy = data.shortCatchCopy || '日々のゆとりを生み出す相棒';
-
-        var snsTemplates = [
-          {
-            label: 'Threads・X パターン① 共感型',
-            text: '「もっと早く知っていれば…」\n\n私も最初は戸惑っていましたが、あることに気づいてから景色が変わりました。\n\nその体験から生まれた『' + displayName + '』について、noteに想いを綴りました👇\n\n[noteのURLをここに貼る]\n\n#AI活用 #中小企業支援 #業務効率化'
-          },
-          {
-            label: 'Threads・X パターン② ノウハウ型',
-            text: '日々の負担をそっと手放す3つの考え方。\n\n1. 自分で抱え込まない\n2. 完璧より心地よさ\n3. 相棒となる道具に頼る\n\n私が作った『' + displayName + '』について詳しくnoteに書きました👇\n\n[noteのURLをここに貼る]\n\n#AI活用 #業務改善 #中小企業'
-          },
-          {
-            label: 'Threads・X パターン③ 問いかけ型',
-            text: 'ふと振り返ったとき、どちらを選びたいですか？\n\nA：これまで通り時間をかけて頑張る\nB：新しい道具を使って心にゆとりを持つ\n\n「B」に惹かれた方へ、私が作った『' + displayName + '』のご案内です👇\n\n[noteのURLをここに貼る]\n\n#AI #業務効率化 #起業'
-          },
-          {
-            label: 'Threads・X パターン④ パートナー募集型',
-            text: '【ご案内】同じ想いを持つ方を募集しています。\n\n誰もが無理なく使えるように、という願いを込めて『' + displayName + '』を作りました。\n\n一緒に育ててくださる方、ぜひnoteをお読みください👇\n\n[noteのURLをここに貼る]\n\n#AI活用 #新サービス #中小企業支援'
-          }
-        ];
-
-        var midjourneyPrompt = 'A professional Japanese blog header image, dark navy blue gradient background (#1a2e5a to #2a4d9e), glowing abstract icons representing trust and innovation, clean modern UI elements, bold white Japanese typography reading "' + displayName + '" and "' + catchCopy + '", gold accent highlights (#e8b830), soft blue glow effects, banner format, 8k resolution --ar 1.91:1 --v 6.0';
-
         var snsArea = document.getElementById('snsArea');
         snsArea.innerHTML = '';
-
-        var snsTitle = document.createElement('div');
-        snsTitle.innerHTML = '<h3 class="text-xl font-bold text-slate-800 mb-1">📱 SNS集客投稿テンプレ（Threads・X対応）</h3><p class="text-sm text-slate-500">noteへ誘導するSNS投稿文です。URLを差し替えてそのまま使えます。</p>';
-        snsArea.appendChild(snsTitle);
-
-        var snsGrid = document.createElement('div');
-        snsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
-
         var snsAllText = '';
-        for (var j = 0; j < snsTemplates.length; j++) {
-          var t = snsTemplates[j];
-          snsAllText += '【' + t.label + '】\n' + t.text + '\n\n------------------------\n\n';
 
-          var snsCard = document.createElement('div');
-          snsCard.className = 'bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col';
+        // Threads
+        if (data.threads && data.threads.length) {
+          var threadsTitle = document.createElement('div');
+          threadsTitle.innerHTML =
+            '<h3 class="text-xl font-bold text-slate-800 mb-1">🧵 Threads 集客投稿テンプレ</h3>' +
+            '<p class="text-xs text-slate-500 mb-4">400文字以内・共感ファーストで設計しています。URLを差し替えてそのまま使えます。</p>';
+          snsArea.appendChild(threadsTitle);
 
-          var snsHeader = document.createElement('div');
-          snsHeader.className = 'flex justify-between items-center mb-3';
+          var threadsGrid = document.createElement('div');
+          threadsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
 
-          var snsLabel = document.createElement('span');
-          snsLabel.className = 'text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded';
-          snsLabel.textContent = t.label;
-
-          var snsCopyBtn = document.createElement('button');
-          snsCopyBtn.className = 'text-xs font-bold px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-600 rounded-lg';
-          snsCopyBtn.textContent = '📋 コピー';
-          (function(txt) {
-            snsCopyBtn.addEventListener('click', function() { copyText(txt, 'SNS投稿をコピーしました！'); });
-          })(t.text);
-
-          snsHeader.appendChild(snsLabel);
-          snsHeader.appendChild(snsCopyBtn);
-
-          var snsBody = document.createElement('div');
-          snsBody.className = 'text-sm text-slate-700 whitespace-pre-wrap leading-relaxed flex-1 bg-slate-50 p-3 rounded-lg border border-slate-100 mt-2';
-          snsBody.textContent = t.text;
-
-          snsCard.appendChild(snsHeader);
-          snsCard.appendChild(snsBody);
-          snsGrid.appendChild(snsCard);
+          for (var ti = 0; ti < data.threads.length; ti++) {
+            var t = data.threads[ti];
+            snsAllText += '【' + t.label + '】\n' + t.text + '\n\n------------------------\n\n';
+            var tc = buildSnsCard(t.label, t.text, '#6366f1', 'Threadsコピー');
+            threadsGrid.appendChild(tc);
+          }
+          snsArea.appendChild(threadsGrid);
         }
-        snsArea.appendChild(snsGrid);
+
+        // X
+        if (data.x_post && data.x_post.length) {
+          var xTitle = document.createElement('div');
+          xTitle.className = 'mt-8';
+          xTitle.innerHTML =
+            '<h3 class="text-xl font-bold text-slate-800 mb-1">🐦 X(Twitter) 集客投稿テンプレ</h3>' +
+            '<p class="text-xs text-slate-500 mb-4">140文字以内・強い冒頭で掴む設計です。URLを差し替えてそのまま使えます。</p>';
+          snsArea.appendChild(xTitle);
+
+          var xGrid = document.createElement('div');
+          xGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
+          for (var xi = 0; xi < data.x_post.length; xi++) {
+            var xp = data.x_post[xi];
+            snsAllText += '【' + xp.label + '】\n' + xp.text + '\n\n------------------------\n\n';
+            var xc = buildSnsCard(xp.label, xp.text, '#0ea5e9', 'Xコピー');
+            xGrid.appendChild(xc);
+          }
+          snsArea.appendChild(xGrid);
+        }
+
+        // Midjourney
+        var midjourneyPrompt = 'A professional Japanese blog header image, dark navy blue gradient background (#1a2e5a to #2a4d9e), glowing abstract icons representing trust and innovation, clean modern UI elements, small and elegant Japanese typography reading "' + displayName + '" and "' + catchCopy + '" placed modestly in lower area, text size subtle and refined not dominant, gold accent highlights (#e8b830), soft blue glow effects, banner format, 8k resolution --ar 1.91:1 --v 6.0';
 
         var mjSection = document.createElement('div');
-        var mjDiv = document.createElement('div');
-        mjDiv.innerHTML = '<h3 class="text-xl font-bold text-slate-800 mb-2">🎨 note見出し画像用 Midjourneyプロンプト</h3><div class="mt-2 inline-block bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 mb-4">💡 AI考案サブキャッチ：<span class="text-teal-600">「' + catchCopy + '」</span></div>';
-        mjSection.appendChild(mjDiv);
+        mjSection.className = 'mt-8';
+
+        var mjHeader = document.createElement('div');
+        mjHeader.innerHTML =
+          '<h3 class="text-xl font-bold text-slate-800 mb-2">🎨 note見出し画像用 Midjourneyプロンプト</h3>' +
+          '<div class="inline-block bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 mb-4">💡 AI考案サブキャッチ：<span class="text-teal-600">「' + catchCopy + '」</span></div>';
+        mjSection.appendChild(mjHeader);
 
         var mjBox = document.createElement('div');
         mjBox.className = 'bg-slate-900 rounded-xl p-5 relative';
 
-        var mjCopyBtn = document.createElement('button');
-        mjCopyBtn.className = 'absolute top-4 right-4 text-slate-300 hover:text-white text-xs font-medium px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg';
-        mjCopyBtn.textContent = '📋 コピー';
-        mjCopyBtn.addEventListener('click', function() { copyText(midjourneyPrompt, 'プロンプトをコピーしました！'); });
+        var mjBtn = document.createElement('button');
+        mjBtn.className = 'absolute top-4 right-4 text-slate-300 text-xs font-medium px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg';
+        mjBtn.textContent = '📋 コピー';
+        mjBtn.addEventListener('click', function() { copyText(midjourneyPrompt, 'プロンプトをコピーしました！'); });
 
-        var mjText = document.createElement('p');
-        mjText.className = 'text-slate-300 text-sm font-mono leading-relaxed pr-20 break-all';
-        mjText.textContent = midjourneyPrompt;
+        var mjTxt = document.createElement('p');
+        mjTxt.className = 'text-slate-300 text-sm font-mono leading-relaxed pr-20 break-all';
+        mjTxt.textContent = midjourneyPrompt;
 
-        mjBox.appendChild(mjCopyBtn);
-        mjBox.appendChild(mjText);
+        mjBox.appendChild(mjBtn);
+        mjBox.appendChild(mjTxt);
         mjSection.appendChild(mjBox);
         snsArea.appendChild(mjSection);
 
-        allCopyText = articleText + '━━━━━━━━━━━━━━━━━━━━\n\n■ SNS集客投稿テンプレ\n\n' + snsAllText + '━━━━━━━━━━━━━━━━━━━━\n\n■ Midjourneyプロンプト\n\n' + midjourneyPrompt;
+        allCopyText = articleText +
+          '━━━━━━━━━━━━━━━━━━━━\n\n■ SNS集客投稿テンプレ\n\n' + snsAllText +
+          '━━━━━━━━━━━━━━━━━━━━\n\n■ Midjourneyプロンプト\n\n' + midjourneyPrompt;
 
         document.getElementById('resultArea').classList.remove('hidden');
         document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
@@ -476,6 +517,45 @@
         errDiv.classList.remove('hidden');
         showToast('生成に失敗しました', true);
       }
+    }
+
+    function buildSnsCard(label, text, color, btnLabel) {
+      var card = document.createElement('div');
+      card.className = 'bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col';
+
+      var cardHeader = document.createElement('div');
+      cardHeader.className = 'flex justify-between items-center mb-3';
+
+      var labelEl = document.createElement('span');
+      labelEl.className = 'text-xs font-bold px-2.5 py-1 rounded text-white';
+      labelEl.style.background = color;
+      labelEl.textContent = label;
+
+      var btn = document.createElement('button');
+      btn.className = 'text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg';
+      btn.textContent = '📋 ' + btnLabel;
+      (function(t) {
+        btn.addEventListener('click', function() { copyText(t, 'コピーしました！'); });
+      })(text);
+
+      var charCount = document.createElement('span');
+      charCount.className = 'text-xs text-slate-400 ml-2';
+      charCount.textContent = text.length + '文字';
+
+      cardHeader.appendChild(labelEl);
+      var btnWrap = document.createElement('div');
+      btnWrap.className = 'flex items-center gap-1';
+      btnWrap.appendChild(charCount);
+      btnWrap.appendChild(btn);
+      cardHeader.appendChild(btnWrap);
+
+      var bodyEl = document.createElement('div');
+      bodyEl.className = 'text-sm text-slate-700 whitespace-pre-wrap leading-relaxed flex-1 bg-slate-50 p-3 rounded-lg border border-slate-100 mt-2';
+      bodyEl.textContent = text;
+
+      card.appendChild(cardHeader);
+      card.appendChild(bodyEl);
+      return card;
     }
   </script>
 </body>
