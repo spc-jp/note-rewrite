@@ -40,7 +40,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen pb-24">
 
-  <!-- ヘッダー -->
   <div class="sticky top-0 z-40 bg-slate-50/90 backdrop-blur-md border-b border-slate-200 pb-4 pt-4 px-6 mb-8 shadow-sm">
     <div class="max-w-4xl mx-auto relative">
       <div class="text-center space-y-2">
@@ -57,7 +56,6 @@
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-6" id="inputArea">
 
-    <!-- STEP1: 基本情報 -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
@@ -91,12 +89,11 @@
       </div>
     </div>
 
-    <!-- STEP2: あなたの物語（NEW） -->
     <div class="bg-white rounded-2xl shadow-sm border border-amber-200 overflow-hidden">
       <div class="bg-amber-50 px-6 py-4 border-b border-amber-200">
         <h2 class="text-lg font-bold text-amber-800 flex items-center gap-2">
           <span class="bg-amber-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
-          💛 あなたの物語を教えてください（収益化の核心）
+          あなたの物語を教えてください（収益化の核心）
         </h2>
         <p class="text-xs text-amber-700 mt-1">この4つの質問への答えが、読者の心に刺さる記事の核心になります。</p>
       </div>
@@ -120,7 +117,6 @@
       </div>
     </div>
 
-    <!-- STEP3: 目的・トーン -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
@@ -150,7 +146,6 @@
       </div>
     </div>
 
-    <!-- STEP4: パターン選択 -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
@@ -182,41 +177,33 @@
 
         <button onclick="handleGenerate()"
           class="w-full mt-8 bg-teal-600 text-white font-bold py-4 rounded-xl shadow-md hover:bg-teal-700 transition-colors text-lg">
-          ✨ AIがセールス記事を一括生成する
+          AIがセールス記事を一括生成する
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ローディング -->
   <div id="loadingArea" class="hidden max-w-4xl mx-auto px-4 py-20 text-center text-teal-600">
     <div class="w-12 h-12 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-4"></div>
     <p class="font-bold text-lg">Claudeがあなたの物語を織り込んで執筆しています...</p>
     <p class="text-sm text-slate-500 mt-2">30〜60秒ほどお待ちください。</p>
   </div>
 
-  <!-- 結果エリア -->
   <div id="resultArea" class="hidden max-w-4xl mx-auto px-4 sm:px-6 space-y-8 pt-4">
     <div class="text-center">
-      <h2 class="text-2xl font-bold text-slate-800">✅ 生成が完了しました！</h2>
+      <h2 class="text-2xl font-bold text-slate-800">生成が完了しました！</h2>
       <p id="resultMeta" class="text-slate-500 mt-2"></p>
     </div>
 
-    <!-- 診断スコア -->
-    <div id="scoreArea" class="bg-amber-50 border border-amber-200 rounded-2xl p-6 space-y-3"></div>
-
-    <!-- note記事 -->
+    <div id="scoreArea" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-6 space-y-3"></div>
     <div id="resultCards" class="space-y-8"></div>
-
-    <!-- SNSエリア -->
     <div id="snsArea" class="mt-12 pt-10 border-t-2 border-slate-200 space-y-10"></div>
 
-    <!-- 一括コピー -->
     <div class="bg-teal-50 border border-teal-100 rounded-2xl p-6 text-center shadow-sm">
       <h3 class="text-lg font-bold text-teal-900 mb-2">すべての準備が整いました！</h3>
       <p class="text-sm text-teal-700 mb-6">記事・Threads・X・Midjourneyプロンプトをまとめてコピーできます。</p>
       <button onclick="copyAll()" class="bg-slate-800 text-white px-8 py-4 rounded-xl text-base font-bold hover:bg-slate-900 transition-colors shadow-md">
-        📋 全て一括でコピーする
+        全て一括でコピーする
       </button>
     </div>
 
@@ -289,7 +276,7 @@
       var html = '';
       for (var i = 0; i < lines.length; i++) {
         var line = lines[i];
-        if (/^(#[^\s#]+\s*)+$/.test(line.trim()) && line.trim().indexOf(' ') === -1) {
+        if (/^(#[^\s#]+\s*)+$/.test(line.trim()) && line.trim().indexOf(' ') < 0) {
           html += '<div class="hashtags">' + line.trim() + '</div>';
         } else if (line.startsWith('## ')) {
           html += '<h2>' + line.replace('## ', '') + '</h2>';
@@ -302,6 +289,46 @@
         }
       }
       return html;
+    }
+
+    function buildSnsCard(label, text, color) {
+      var card = document.createElement('div');
+      card.className = 'bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col';
+
+      var cardHeader = document.createElement('div');
+      cardHeader.className = 'flex justify-between items-center mb-3';
+
+      var labelEl = document.createElement('span');
+      labelEl.className = 'text-xs font-bold px-2.5 py-1 rounded text-white';
+      labelEl.style.background = color;
+      labelEl.textContent = label;
+
+      var rightWrap = document.createElement('div');
+      rightWrap.className = 'flex items-center gap-2';
+
+      var charCount = document.createElement('span');
+      charCount.className = 'text-xs text-slate-400';
+      charCount.textContent = text.length + '文字';
+
+      var btn = document.createElement('button');
+      btn.className = 'text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg';
+      btn.textContent = 'コピー';
+      (function(t) {
+        btn.addEventListener('click', function() { copyText(t, 'コピーしました！'); });
+      })(text);
+
+      rightWrap.appendChild(charCount);
+      rightWrap.appendChild(btn);
+      cardHeader.appendChild(labelEl);
+      cardHeader.appendChild(rightWrap);
+
+      var bodyEl = document.createElement('div');
+      bodyEl.className = 'text-sm text-slate-700 whitespace-pre-wrap leading-relaxed flex-1 bg-slate-50 p-3 rounded-lg border border-slate-100 mt-2';
+      bodyEl.textContent = text;
+
+      card.appendChild(cardHeader);
+      card.appendChild(bodyEl);
+      return card;
     }
 
     async function handleGenerate() {
@@ -357,18 +384,18 @@
         document.getElementById('loadingArea').classList.add('hidden');
         document.getElementById('resultMeta').textContent = '「' + currentGoal + '」の目的で、「' + currentTone + '」トーンをベースに作成しました。';
 
-        // 診断スコア表示
+        // 診断スコア
         var scoreArea = document.getElementById('scoreArea');
         if (data.score) {
           var s = data.score;
           scoreArea.innerHTML =
-            '<h3 class="text-lg font-bold text-amber-800 mb-3">📊 あなたの記事への診断アドバイス</h3>' +
+            '<h3 class="text-lg font-bold text-amber-800 mb-3">あなたの記事への診断アドバイス</h3>' +
             '<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">' +
               '<div class="bg-white rounded-xl p-4 border border-amber-100"><div class="text-xs font-bold text-amber-600 mb-1">タイトルの引力</div><div class="text-sm text-slate-700">' + (s.title || '') + '</div></div>' +
               '<div class="bg-white rounded-xl p-4 border border-amber-100"><div class="text-xs font-bold text-amber-600 mb-1">冒頭の掴み</div><div class="text-sm text-slate-700">' + (s.hook || '') + '</div></div>' +
               '<div class="bg-white rounded-xl p-4 border border-amber-100"><div class="text-xs font-bold text-amber-600 mb-1">購入誘導の自然さ</div><div class="text-sm text-slate-700">' + (s.cta || '') + '</div></div>' +
             '</div>' +
-            '<div class="bg-teal-50 rounded-xl p-4 border border-teal-200"><div class="text-xs font-bold text-teal-700 mb-1">💡 収益化アドバイス</div><div class="text-sm text-teal-900 font-medium">' + (s.advice || '') + '</div></div>';
+            '<div class="bg-teal-50 rounded-xl p-4 border border-teal-200"><div class="text-xs font-bold text-teal-700 mb-1">収益化アドバイス</div><div class="text-sm text-teal-900 font-medium">' + (s.advice || '') + '</div></div>';
           scoreArea.classList.remove('hidden');
         }
 
@@ -397,11 +424,11 @@
 
           var header = document.createElement('div');
           header.className = 'bg-teal-50 px-5 py-4 border-b border-teal-100 flex justify-between items-center';
-          header.innerHTML = '<span class="font-bold text-teal-900">📝 ' + (keyMap[key] || key) + '</span>';
+          header.innerHTML = '<span class="font-bold text-teal-900">note記事 / ' + (keyMap[key] || key) + '</span>';
 
           var copyBtn = document.createElement('button');
           copyBtn.className = 'text-teal-700 text-sm font-bold px-3 py-1.5 bg-white border border-teal-200 rounded-lg hover:bg-teal-50';
-          copyBtn.textContent = '📋 この記事をコピー';
+          copyBtn.textContent = 'この記事をコピー';
           (function(t) {
             copyBtn.addEventListener('click', function() { copyText(t, '記事をコピーしました！'); });
           })(fullText);
@@ -416,7 +443,7 @@
           body.appendChild(titleEl);
 
           var articleDiv = document.createElement('div');
-          articleDiv.className = 'article-body max-h-[600px] overflow-y-auto pr-2';
+          articleDiv.className = 'article-body max-h-96 overflow-y-auto pr-2';
           articleDiv.innerHTML = markdownToHtml(r.content);
           body.appendChild(articleDiv);
 
@@ -436,18 +463,16 @@
         if (data.threads && data.threads.length) {
           var threadsTitle = document.createElement('div');
           threadsTitle.innerHTML =
-            '<h3 class="text-xl font-bold text-slate-800 mb-1">🧵 Threads 集客投稿テンプレ</h3>' +
-            '<p class="text-xs text-slate-500 mb-4">400文字以内・共感ファーストで設計しています。URLを差し替えてそのまま使えます。</p>';
+            '<h3 class="text-xl font-bold text-slate-800 mb-1">Threads 集客投稿テンプレ</h3>' +
+            '<p class="text-xs text-slate-500 mb-4">400文字以内・共感ファーストで設計。URLを差し替えてそのまま使えます。</p>';
           snsArea.appendChild(threadsTitle);
 
           var threadsGrid = document.createElement('div');
           threadsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
-
           for (var ti = 0; ti < data.threads.length; ti++) {
             var t = data.threads[ti];
             snsAllText += '【' + t.label + '】\n' + t.text + '\n\n------------------------\n\n';
-            var tc = buildSnsCard(t.label, t.text, '#6366f1', 'Threadsコピー');
-            threadsGrid.appendChild(tc);
+            threadsGrid.appendChild(buildSnsCard(t.label, t.text, '#6366f1'));
           }
           snsArea.appendChild(threadsGrid);
         }
@@ -457,18 +482,16 @@
           var xTitle = document.createElement('div');
           xTitle.className = 'mt-8';
           xTitle.innerHTML =
-            '<h3 class="text-xl font-bold text-slate-800 mb-1">🐦 X(Twitter) 集客投稿テンプレ</h3>' +
-            '<p class="text-xs text-slate-500 mb-4">140文字以内・強い冒頭で掴む設計です。URLを差し替えてそのまま使えます。</p>';
+            '<h3 class="text-xl font-bold text-slate-800 mb-1">X(Twitter) 集客投稿テンプレ</h3>' +
+            '<p class="text-xs text-slate-500 mb-4">140文字以内・強い冒頭で掴む設計。URLを差し替えてそのまま使えます。</p>';
           snsArea.appendChild(xTitle);
 
           var xGrid = document.createElement('div');
           xGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
-
           for (var xi = 0; xi < data.x_post.length; xi++) {
             var xp = data.x_post[xi];
             snsAllText += '【' + xp.label + '】\n' + xp.text + '\n\n------------------------\n\n';
-            var xc = buildSnsCard(xp.label, xp.text, '#0ea5e9', 'Xコピー');
-            xGrid.appendChild(xc);
+            xGrid.appendChild(buildSnsCard(xp.label, xp.text, '#0ea5e9'));
           }
           snsArea.appendChild(xGrid);
         }
@@ -478,19 +501,16 @@
 
         var mjSection = document.createElement('div');
         mjSection.className = 'mt-8';
-
-        var mjHeader = document.createElement('div');
-        mjHeader.innerHTML =
-          '<h3 class="text-xl font-bold text-slate-800 mb-2">🎨 note見出し画像用 Midjourneyプロンプト</h3>' +
-          '<div class="inline-block bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 mb-4">💡 AI考案サブキャッチ：<span class="text-teal-600">「' + catchCopy + '」</span></div>';
-        mjSection.appendChild(mjHeader);
+        mjSection.innerHTML =
+          '<h3 class="text-xl font-bold text-slate-800 mb-2">note見出し画像用 Midjourneyプロンプト</h3>' +
+          '<div class="inline-block bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 mb-4">AI考案サブキャッチ：<span class="text-teal-600">「' + catchCopy + '」</span></div>';
 
         var mjBox = document.createElement('div');
         mjBox.className = 'bg-slate-900 rounded-xl p-5 relative';
 
         var mjBtn = document.createElement('button');
         mjBtn.className = 'absolute top-4 right-4 text-slate-300 text-xs font-medium px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg';
-        mjBtn.textContent = '📋 コピー';
+        mjBtn.textContent = 'コピー';
         mjBtn.addEventListener('click', function() { copyText(midjourneyPrompt, 'プロンプトをコピーしました！'); });
 
         var mjTxt = document.createElement('p');
@@ -517,45 +537,6 @@
         errDiv.classList.remove('hidden');
         showToast('生成に失敗しました', true);
       }
-    }
-
-    function buildSnsCard(label, text, color, btnLabel) {
-      var card = document.createElement('div');
-      card.className = 'bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col';
-
-      var cardHeader = document.createElement('div');
-      cardHeader.className = 'flex justify-between items-center mb-3';
-
-      var labelEl = document.createElement('span');
-      labelEl.className = 'text-xs font-bold px-2.5 py-1 rounded text-white';
-      labelEl.style.background = color;
-      labelEl.textContent = label;
-
-      var btn = document.createElement('button');
-      btn.className = 'text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg';
-      btn.textContent = '📋 ' + btnLabel;
-      (function(t) {
-        btn.addEventListener('click', function() { copyText(t, 'コピーしました！'); });
-      })(text);
-
-      var charCount = document.createElement('span');
-      charCount.className = 'text-xs text-slate-400 ml-2';
-      charCount.textContent = text.length + '文字';
-
-      cardHeader.appendChild(labelEl);
-      var btnWrap = document.createElement('div');
-      btnWrap.className = 'flex items-center gap-1';
-      btnWrap.appendChild(charCount);
-      btnWrap.appendChild(btn);
-      cardHeader.appendChild(btnWrap);
-
-      var bodyEl = document.createElement('div');
-      bodyEl.className = 'text-sm text-slate-700 whitespace-pre-wrap leading-relaxed flex-1 bg-slate-50 p-3 rounded-lg border border-slate-100 mt-2';
-      bodyEl.textContent = text;
-
-      card.appendChild(cardHeader);
-      card.appendChild(bodyEl);
-      return card;
     }
   </script>
 </body>
