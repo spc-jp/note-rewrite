@@ -90,7 +90,7 @@
       </div>
     </div>
 
-    <!-- STEP2: あなたの物語（プルダウン+自由記述） -->
+    <!-- STEP2: 物語 -->
     <div class="bg-white rounded-2xl shadow-sm border border-amber-200 overflow-hidden">
       <div class="bg-amber-50 px-6 py-4 border-b border-amber-200">
         <h2 class="text-lg font-bold text-amber-800 flex items-center gap-2">
@@ -100,8 +100,6 @@
         <p class="text-xs text-amber-700 mt-1">選択肢から選んで、必要なら自分の言葉に書き換えてください。</p>
       </div>
       <div class="p-6 space-y-6">
-
-        <!-- Q1 きっかけ -->
         <div>
           <label class="block text-sm font-bold text-slate-700 mb-2">🔥 そのアプリを作ろうと思ったきっかけは？</label>
           <select id="sel_trigger" onchange="handleSelect('trigger')" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 mb-2">
@@ -115,8 +113,6 @@
           </select>
           <textarea id="txt_trigger" rows="2" placeholder="自分の言葉で書いてください" class="hidden w-full px-4 py-3 border border-amber-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 resize-none"></textarea>
         </div>
-
-        <!-- Q2 誰の顔 -->
         <div>
           <label class="block text-sm font-bold text-slate-700 mb-2">👤 作るとき、誰の困り顔が浮かびましたか？</label>
           <select id="sel_whoFace" onchange="handleSelect('whoFace')" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 mb-2">
@@ -130,8 +126,6 @@
           </select>
           <textarea id="txt_whoFace" rows="2" placeholder="自分の言葉で書いてください" class="hidden w-full px-4 py-3 border border-amber-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 resize-none"></textarea>
         </div>
-
-        <!-- Q3 最初の気持ち -->
         <div>
           <label class="block text-sm font-bold text-slate-700 mb-2">✨ 初めてアプリが動いたとき、どんな気持ちでしたか？</label>
           <select id="sel_firstFeel" onchange="handleSelect('firstFeel')" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 mb-2">
@@ -145,8 +139,6 @@
           </select>
           <textarea id="txt_firstFeel" rows="2" placeholder="自分の言葉で書いてください" class="hidden w-full px-4 py-3 border border-amber-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 resize-none"></textarea>
         </div>
-
-        <!-- Q4 伝えたいこと -->
         <div>
           <label class="block text-sm font-bold text-slate-700 mb-2">💌 読者に一番伝えたいことは？</label>
           <select id="sel_message" onchange="handleSelect('message')" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-slate-50 mb-2">
@@ -160,7 +152,6 @@
           </select>
           <textarea id="txt_message" rows="2" placeholder="自分の言葉で書いてください" class="hidden w-full px-4 py-3 border border-amber-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 resize-none"></textarea>
         </div>
-
       </div>
     </div>
 
@@ -221,21 +212,56 @@
             <div><div class="font-bold text-slate-800">パートナー募集風</div><p class="text-sm text-slate-500 mt-1">同じ想いを持つ方を募る形で温かく呼びかけます。</p></div>
           </label>
         </div>
-
-        <div id="errorMsg" class="hidden mt-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium"></div>
-
-        <button onclick="handleGenerate()"
-          class="w-full mt-8 bg-teal-600 text-white font-bold py-4 rounded-xl shadow-md hover:bg-teal-700 transition-colors text-lg">
-          AIがセールス記事を一括生成する
-        </button>
       </div>
     </div>
+
+    <!-- STEP5: 記事の長さ（NEW） -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-slate-100/50 px-6 py-4 border-b border-slate-200">
+        <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
+          <span class="bg-teal-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">5</span>
+          記事の長さを選択
+        </h2>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <label class="flex flex-col items-center gap-2 p-5 rounded-xl border-2 cursor-pointer border-teal-500 bg-teal-50/50 text-center" id="len_label_1500">
+            <input type="radio" name="articleLength" value="1500" checked class="hidden" id="len_1500" onchange="selectLength()">
+            <div class="text-2xl font-black text-teal-600">1,500字</div>
+            <div class="font-bold text-slate-800 text-sm">サクッと読める</div>
+            <div class="text-xs text-slate-500">読者の離脱を防ぐ<br>導入・集客向け</div>
+          </label>
+          <label class="flex flex-col items-center gap-2 p-5 rounded-xl border-2 cursor-pointer border-slate-100 bg-white text-center" id="len_label_2500">
+            <input type="radio" name="articleLength" value="2500" class="hidden" id="len_2500" onchange="selectLength()">
+            <div class="text-2xl font-black text-slate-600">2,500字</div>
+            <div class="font-bold text-slate-800 text-sm">スタンダード</div>
+            <div class="text-xs text-slate-500">信頼構築・商品紹介<br>バランスが良い</div>
+          </label>
+          <label class="flex flex-col items-center gap-2 p-5 rounded-xl border-2 cursor-pointer border-slate-100 bg-white text-center" id="len_label_4000">
+            <input type="radio" name="articleLength" value="4000" class="hidden" id="len_4000" onchange="selectLength()">
+            <div class="text-2xl font-black text-slate-600">4,000字</div>
+            <div class="font-bold text-slate-800 text-sm">読み応えあり</div>
+            <div class="text-xs text-slate-500">有料級コンテンツ<br>SEO・購入率向上</div>
+          </label>
+        </div>
+        <div id="lengthNote" class="mt-4 p-3 bg-teal-50 border border-teal-100 rounded-xl text-xs text-teal-700 text-center">
+          1,500字：読者が最後まで読みやすく、SNSからの流入に最適です。
+        </div>
+      </div>
+    </div>
+
+    <div id="errorMsg" class="hidden p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium"></div>
+
+    <button onclick="handleGenerate()"
+      class="w-full bg-teal-600 text-white font-bold py-4 rounded-xl shadow-md hover:bg-teal-700 transition-colors text-lg">
+      AIがセールス記事を一括生成する
+    </button>
   </div>
 
   <div id="loadingArea" class="hidden max-w-4xl mx-auto px-4 py-20 text-center text-teal-600">
     <div class="w-12 h-12 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-4"></div>
-    <p class="font-bold text-lg">Claudeがあなたの物語を織り込んで執筆しています...</p>
-    <p class="text-sm text-slate-500 mt-2">30〜60秒ほどお待ちください。</p>
+    <p class="font-bold text-lg" id="loadingMsg">Claudeがあなたの物語を織り込んで執筆しています...</p>
+    <p class="text-sm text-slate-500 mt-2" id="loadingSubMsg">30〜90秒ほどお待ちください。</p>
   </div>
 
   <div id="resultArea" class="hidden max-w-4xl mx-auto px-4 sm:px-6 space-y-8 pt-4">
@@ -266,9 +292,31 @@
     var WORKER_URL = 'https://note-rewrite.yymmatsu.workers.dev';
     var currentGoal = '信頼構築';
     var currentTone = '語りかけ';
+    var currentLength = '1500';
     var allCopyText = '';
 
-    // プルダウン選択時の処理
+    var lengthNotes = {
+      '1500': '1,500字：読者が最後まで読みやすく、SNSからの流入に最適です。',
+      '2500': '2,500字：信頼構築と商品紹介のバランスが良く、最もスタンダードな長さです。',
+      '4000': '4,000字：有料級の読み応えで、SEO効果と購入率の向上が期待できます。生成に少し時間がかかります。',
+    };
+
+    function selectLength() {
+      var val = document.querySelector('input[name="articleLength"]:checked').value;
+      currentLength = val;
+      ['1500','2500','4000'].forEach(function(v) {
+        var lbl = document.getElementById('len_label_' + v);
+        if (v === val) {
+          lbl.className = 'flex flex-col items-center gap-2 p-5 rounded-xl border-2 cursor-pointer border-teal-500 bg-teal-50/50 text-center';
+          lbl.querySelector('div').className = 'text-2xl font-black text-teal-600';
+        } else {
+          lbl.className = 'flex flex-col items-center gap-2 p-5 rounded-xl border-2 cursor-pointer border-slate-100 bg-white text-center';
+          lbl.querySelector('div').className = 'text-2xl font-black text-slate-600';
+        }
+      });
+      document.getElementById('lengthNote').textContent = lengthNotes[val];
+    }
+
     function handleSelect(field) {
       var sel = document.getElementById('sel_' + field);
       var txt = document.getElementById('txt_' + field);
@@ -282,7 +330,6 @@
       }
     }
 
-    // 物語の値を取得（プルダウン or 自由記述）
     function getStoryValue(field) {
       var sel = document.getElementById('sel_' + field);
       var txt = document.getElementById('txt_' + field);
@@ -432,9 +479,17 @@
         message:   getStoryValue('message'),
       };
 
+      var lengthLabels = { '1500': 'サクッと読める', '2500': 'スタンダード', '4000': '読み応えあり' };
+
       document.getElementById('inputArea').classList.add('hidden');
       document.getElementById('resultArea').classList.add('hidden');
+      document.getElementById('errorMsg').classList.add('hidden');
       document.getElementById('loadingArea').classList.remove('hidden');
+
+      if (currentLength === '4000') {
+        document.getElementById('loadingMsg').textContent = '4,000字の読み応えある記事を執筆しています...';
+        document.getElementById('loadingSubMsg').textContent = '生成量が多いため60〜120秒ほどお待ちください。';
+      }
 
       try {
         var res = await fetch(WORKER_URL, {
@@ -444,7 +499,8 @@
             noteUrl: noteUrl, appName: appName, appUrl: appUrl,
             stripeUrl: stripeUrl, appConcept: appConcept,
             articleGoal: currentGoal, articleTone: currentTone,
-            patterns: patterns, story: story
+            patterns: patterns, story: story,
+            articleLength: currentLength,
           }),
         });
 
@@ -452,7 +508,8 @@
         var data = await res.json();
 
         document.getElementById('loadingArea').classList.add('hidden');
-        document.getElementById('resultMeta').textContent = '「' + currentGoal + '」の目的で、「' + currentTone + '」トーンをベースに作成しました。';
+        document.getElementById('resultMeta').textContent =
+          '「' + currentGoal + '」の目的 / 「' + currentTone + '」トーン / ' + lengthLabels[currentLength] + '（' + currentLength + '字）で作成しました。';
 
         // 診断スコア
         var scoreArea = document.getElementById('scoreArea');
@@ -479,13 +536,14 @@
 
         var cards = document.getElementById('resultCards');
         cards.innerHTML = '';
-        var articleText = '■ 基本情報\n・元記事URL：' + noteUrl + '\n・アプリ名：' + appName + '\n・目的：' + currentGoal + '\n・トーン：' + currentTone + '\n\n━━━━━━━━━━━━━━━━━━━━\n\n';
+        var articleText = '■ 基本情報\n・元記事URL：' + noteUrl + '\n・アプリ名：' + appName + '\n・目的：' + currentGoal + '\n・トーン：' + currentTone + '\n・文字数：' + currentLength + '字（' + lengthLabels[currentLength] + '）\n\n━━━━━━━━━━━━━━━━━━━━\n\n';
 
         var keys = ['empathy', 'knowhow', 'question', 'partner'];
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
           if (!data[key]) continue;
           var r = data[key];
+          if (!r.title && !r.content) continue;
           var fullText = r.title + '\n\n' + r.content;
           articleText += '■ 【' + (keyMap[key] || key) + '】\nタイトル：' + r.title + '\n\n' + r.content + '\n\n━━━━━━━━━━━━━━━━━━━━\n\n';
 
@@ -529,44 +587,43 @@
         snsArea.innerHTML = '';
         var snsAllText = '';
 
-        // Threads
         if (data.threads && data.threads.length) {
           var threadsTitle = document.createElement('div');
           threadsTitle.innerHTML =
             '<h3 class="text-xl font-bold text-slate-800 mb-1">Threads 集客投稿テンプレ</h3>' +
-            '<p class="text-xs text-slate-500 mb-4">400文字以内・共感ファーストで設計。URLを差し替えてそのまま使えます。</p>';
+            '<p class="text-xs text-slate-500 mb-4">300文字以内・共感ファーストで設計。URLを差し替えてそのまま使えます。</p>';
           snsArea.appendChild(threadsTitle);
 
           var threadsGrid = document.createElement('div');
           threadsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
           for (var ti = 0; ti < data.threads.length; ti++) {
             var t = data.threads[ti];
+            if (!t.text) continue;
             snsAllText += '【' + t.label + '】\n' + t.text + '\n\n------------------------\n\n';
             threadsGrid.appendChild(buildSnsCard(t.label, t.text, '#6366f1'));
           }
           snsArea.appendChild(threadsGrid);
         }
 
-        // X
         if (data.x_post && data.x_post.length) {
           var xTitle = document.createElement('div');
           xTitle.className = 'mt-8';
           xTitle.innerHTML =
             '<h3 class="text-xl font-bold text-slate-800 mb-1">X(Twitter) 集客投稿テンプレ</h3>' +
-            '<p class="text-xs text-slate-500 mb-4">140文字以内・強い冒頭で掴む設計。URLを差し替えてそのまま使えます。</p>';
+            '<p class="text-xs text-slate-500 mb-4">120文字以内・強い冒頭で掴む設計。URLを差し替えてそのまま使えます。</p>';
           snsArea.appendChild(xTitle);
 
           var xGrid = document.createElement('div');
           xGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
           for (var xi = 0; xi < data.x_post.length; xi++) {
             var xp = data.x_post[xi];
+            if (!xp.text) continue;
             snsAllText += '【' + xp.label + '】\n' + xp.text + '\n\n------------------------\n\n';
             xGrid.appendChild(buildSnsCard(xp.label, xp.text, '#0ea5e9'));
           }
           snsArea.appendChild(xGrid);
         }
 
-        // Midjourney
         var midjourneyPrompt = 'A professional Japanese blog header image, dark navy blue gradient background (#1a2e5a to #2a4d9e), glowing abstract icons representing trust and innovation, clean modern UI elements, small and elegant Japanese typography reading "' + displayName + '" and "' + catchCopy + '" placed modestly in lower area, text size subtle and refined not dominant, gold accent highlights (#e8b830), soft blue glow effects, banner format, 8k resolution --ar 1.91:1 --v 6.0';
 
         var mjSection = document.createElement('div');
@@ -577,16 +634,13 @@
 
         var mjBox = document.createElement('div');
         mjBox.className = 'bg-slate-900 rounded-xl p-5 relative';
-
         var mjBtn = document.createElement('button');
         mjBtn.className = 'absolute top-4 right-4 text-slate-300 text-xs font-medium px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg';
         mjBtn.textContent = 'コピー';
         mjBtn.addEventListener('click', function() { copyText(midjourneyPrompt, 'プロンプトをコピーしました！'); });
-
         var mjTxt = document.createElement('p');
         mjTxt.className = 'text-slate-300 text-sm font-mono leading-relaxed pr-20 break-all';
         mjTxt.textContent = midjourneyPrompt;
-
         mjBox.appendChild(mjBtn);
         mjBox.appendChild(mjTxt);
         mjSection.appendChild(mjBox);
